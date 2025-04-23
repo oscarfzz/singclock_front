@@ -1,0 +1,1 @@
+enum NavBarItem { sign, listado, chat, config }

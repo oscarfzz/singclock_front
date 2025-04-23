@@ -1,0 +1,49 @@
+import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
+import 'package:signclock/model/phone_model.dart';
+import 'package:signclock/sign/services/app_error.dart';
+
+import 'api_service.dart';
+
+import 'package:signclock/model/api_response_model.dart';
+import 'package:signclock/model/sign_model.dart';
+
+import 'package:signclock/constant/api_constants.dart';
+
+class SignServices extends ApiService {
+  SignServices(super.authBloc);
+
+  Future<ApiResponseModel<SignModel?>> postSign(SignModel signModel) async {
+    return await apiRequest<SignModel?>(
+      endpoint: ApiConstants.sign,
+      data: signModel.toJson(),
+      fromJson: (dynamic json) =>
+          json != null ? SignModel.fromJson(json) : null,
+    );
+  }
+
+  Future<String?> hadleSign(
+      SignModel data, AuthHyBloc authBloc, SignServices signServices) async {
+    var retData = await signServices.postSign(data);
+
+    if (retData.status == "success") {
+      final updatedUser =
+          authBloc.state.user!.copyWith(lastSign: retData.data!.type);
+      authBloc.add(Authenticated(
+          isAuthenticated: true,
+          user: updatedUser,
+          token: authBloc.state.token));
+      return retData.data!.type;
+    } else {
+      throw NetworkError(retData.msg);
+    }
+  }
+
+  Future<ApiResponseModel<String?>> getActualStatus(
+      PhoneModel phoneModel) async {
+    return await apiRequest<String?>(
+      endpoint: ApiConstants.statusInfo,
+      data: phoneModel.toJson(),
+      fromJson: (dynamic json) => json != null ? json.toString() : null,
+    );
+  }
+}
