@@ -1,6 +1,5 @@
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:signclock/blocs/app/app_state.dart';
 import 'package:signclock/model/phone_model.dart';
 
 part 'auth_hy_event.dart';
@@ -10,7 +9,6 @@ part 'auth_hy_bloc.freezed.dart';
 class AuthHyBloc extends HydratedBloc<AuthHyEvent, AuthHyState> {
   AuthHyBloc() : super(AuthHyState.initial()) {
     on<Authenticated>(_onAuthenticated);
-    on<_AppStateChanged>(_onAppStateChanged);
     on<UserUpdated>(_onUserUpdated);
     on<Unauthenticated>(_onUnauthenticated);
   }
@@ -28,14 +26,6 @@ class AuthHyBloc extends HydratedBloc<AuthHyEvent, AuthHyState> {
       isAuthenticated: event.isAuthenticated,
       user: event.user,
       token: event.token,
-    ));
-  }
-
-  void _onAppStateChanged(_AppStateChanged event, Emitter<AuthHyState> emit) {
-    emit(state.copyWith(
-      isAuthenticated: event.newState.status == AppStatus.identified,
-      user: event.newState.phone,
-      token: event.newState.token,
     ));
   }
 
@@ -87,5 +77,10 @@ class AuthHyBloc extends HydratedBloc<AuthHyEvent, AuthHyState> {
       'user': state.user?.toJson(),
       'token': state.token,
     };
+  }
+
+  @override
+  Future<void> close() {
+    return super.close();
   }
 }

@@ -60,37 +60,57 @@ class ApiService {
         print("===== API Raw Response =====");
         print("Endpoint: $endpoint");
         print("Status Code: ${response.statusCode}");
+        print("Response Headers: ${response.headers}");
         print("Response Data: ${response.data}");
         print("============================");
       }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseBody = response.data as Map<dynamic, dynamic>? ?? {};
-        final String? token = responseBody['token'] as String?;
+        final String? tokenFromHeader = response.headers.value('x-token');
         
-        final Map<String, dynamic> dataMap;
-        if (responseBody['data'] is Map) {
-          dataMap = Map<String, dynamic>.from(
-              (responseBody['data'] as Map).map((key, value) => MapEntry(key.toString(), value))
-          );
-        } else {
-          dataMap = <String, dynamic>{};
-          if (kDebugMode) {
-            print("WARN: API response 'data' field was not a Map or was null.");
-          }
+        final dynamic dataFieldContent = responseBody['data'];
+        
+        T parsedData;
+        try {
+            parsedData = fromJson(dataFieldContent);
+        } catch (e, stackTrace) {
+            if (kDebugMode) {
+              print("===== fromJson Parsing Exception =====");
+              print("Endpoint: $endpoint");
+              print("Data field content type: ${dataFieldContent?.runtimeType}");
+              print("Data field content: $dataFieldContent");
+              print("Error: ${e.toString()}");
+              print("StackTrace: $stackTrace");
+              print("====================================");
+            }
+            return ApiResponseModel<T>(
+                status: 'error',
+                msg: 'Error al procesar datos de respuesta: ${e.toString()}',
+                data: null, 
+                token: tokenFromHeader 
+            ); 
         }
 
-        final T parsedData = fromJson(dataMap);
         return ApiResponseModel<T>(
             status: responseBody['status'] as String? ?? 'success',
             msg: responseBody['msg'] as String? ?? '',
-            data: parsedData,
-            token: token);
+            data: parsedData, 
+            token: tokenFromHeader 
+        );
       } else if (response.statusCode == 401) {
         if (kDebugMode) {
-          print("Received 401 Unauthorized. Triggering Unauthentication.");
+          print("Received 401 Unauthorized. Scheduling Unauthentication event.");
         }
-        authBloc.add(const Unauthenticated());
+        Future.microtask(() {
+          if (!authBloc.isClosed) {
+            authBloc.add(const Unauthenticated());
+          } else {
+            if (kDebugMode) {
+              print("AuthHyBloc was closed before Unauthenticated could be added.");
+            }
+          }
+        });
         return ApiResponseModel<T>(
             status: 'error',
             msg: response.data?['msg'] ?? 'No autorizado o sesión expirada',
@@ -141,44 +161,6 @@ class ApiService {
     }
   }
 
-  // Método genérico para realizar solicitudes API con manejo de errores
-  // Future<Map<String, dynamic>> apiRequestVOLD({
-  //   required String endpoint,
-  //   required dynamic data,
-  //   Map<String, String>? headers,
-  //   bool tokenHeader = true,
-  // }) async {
-  //   try {
-  //     if (tokenHeader) {
-  //       final token = AuthHyBloc().state.token;
-  //       if (token == null) throw Exception('Token no disponible');
-  //       headers = {'X-Token': token, ...?headers};
-  //     }
-  //     final response = await _dio.post(
-  //       endpoint,
-  //       data: data,
-  //       options: Options(headers: {
-  //         ...?headers,
-  //         "Content-Type": "application/json",
-  //         "Accept": "application/json"
-  //       }),
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       return _parseResponse(response);
-  //       // intentar que todo response sea "status", msg y data[]
-  //     } else {
-  //       return _handleError(
-  //           "Error en la respuesta del servidor", response.statusCode);
-  //     }
-  //   } on DioException catch (e) {
-  //     return _handleError(e.message ?? "Error de red");
-  //   } catch (e) {
-  //     return _handleError("Error desconocido");
-  //   }
-  // }
-
-  // Procesa la respuesta en un formato común
   Map<String, dynamic> parseResponse(Response response) {
     final data = response.data;
     String? token = response.headers.value('x-token');
@@ -190,7 +172,6 @@ class ApiService {
     };
   }
 
-  // Función para manejar errores y generar respuesta uniforme
   Map<String, dynamic> handleError(String message, [int? statusCode]) {
     return {
       "status": "error",

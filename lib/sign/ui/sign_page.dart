@@ -14,14 +14,23 @@ class SignPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authBloc = BlocProvider.of<AuthHyBloc>(context);
+    final authBloc = context.read<AuthHyBloc>();
 
     return BlocProvider<LocationBloc>(
-        create: (_) => LocationBloc(
-              locationRepository: _locationRepository,
-              authBloc: authBloc,
-              signServices: SignServices(authBloc),
-            ),
-        child: const SignLayout());
+      create: (_) {
+        final locationBloc = LocationBloc(
+          locationRepository: _locationRepository,
+          authBloc: authBloc,
+          signServices: SignServices(authBloc),
+        );
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!locationBloc.isClosed) {
+            locationBloc.add(InitEvent());
+          }
+        });
+        return locationBloc;
+      },
+      child: const SignLayout(),
+    );
   }
 }

@@ -21,7 +21,6 @@ mixin _$AuthHyEvent {
     required TResult Function(
             PhoneModel? user, String? token, bool isAuthenticated)
         authenticate,
-    required TResult Function(AppState newState) appStateChanged,
     required TResult Function(
             int? adminPhoneId,
             int? groupId,
@@ -49,7 +48,6 @@ mixin _$AuthHyEvent {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(PhoneModel? user, String? token, bool isAuthenticated)?
         authenticate,
-    TResult? Function(AppState newState)? appStateChanged,
     TResult? Function(
             int? adminPhoneId,
             int? groupId,
@@ -77,7 +75,6 @@ mixin _$AuthHyEvent {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(PhoneModel? user, String? token, bool isAuthenticated)?
         authenticate,
-    TResult Function(AppState newState)? appStateChanged,
     TResult Function(
             int? adminPhoneId,
             int? groupId,
@@ -105,7 +102,6 @@ mixin _$AuthHyEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(Authenticated value) authenticate,
-    required TResult Function(_AppStateChanged value) appStateChanged,
     required TResult Function(UserUpdated value) updateUser,
     required TResult Function(Unauthenticated value) unauthenticate,
   }) =>
@@ -113,7 +109,6 @@ mixin _$AuthHyEvent {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(Authenticated value)? authenticate,
-    TResult? Function(_AppStateChanged value)? appStateChanged,
     TResult? Function(UserUpdated value)? updateUser,
     TResult? Function(Unauthenticated value)? unauthenticate,
   }) =>
@@ -121,7 +116,6 @@ mixin _$AuthHyEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(Authenticated value)? authenticate,
-    TResult Function(_AppStateChanged value)? appStateChanged,
     TResult Function(UserUpdated value)? updateUser,
     TResult Function(Unauthenticated value)? unauthenticate,
     required TResult orElse(),
@@ -145,6 +139,9 @@ class _$AuthHyEventCopyWithImpl<$Res, $Val extends AuthHyEvent>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  /// Create a copy of AuthHyEvent
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -164,6 +161,8 @@ class __$$AuthenticatedImplCopyWithImpl<$Res>
       _$AuthenticatedImpl _value, $Res Function(_$AuthenticatedImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of AuthHyEvent
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -220,7 +219,9 @@ class _$AuthenticatedImpl implements Authenticated {
   @override
   int get hashCode => Object.hash(runtimeType, user, token, isAuthenticated);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AuthHyEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$AuthenticatedImplCopyWith<_$AuthenticatedImpl> get copyWith =>
@@ -232,7 +233,6 @@ class _$AuthenticatedImpl implements Authenticated {
     required TResult Function(
             PhoneModel? user, String? token, bool isAuthenticated)
         authenticate,
-    required TResult Function(AppState newState) appStateChanged,
     required TResult Function(
             int? adminPhoneId,
             int? groupId,
@@ -263,7 +263,6 @@ class _$AuthenticatedImpl implements Authenticated {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(PhoneModel? user, String? token, bool isAuthenticated)?
         authenticate,
-    TResult? Function(AppState newState)? appStateChanged,
     TResult? Function(
             int? adminPhoneId,
             int? groupId,
@@ -294,7 +293,6 @@ class _$AuthenticatedImpl implements Authenticated {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(PhoneModel? user, String? token, bool isAuthenticated)?
         authenticate,
-    TResult Function(AppState newState)? appStateChanged,
     TResult Function(
             int? adminPhoneId,
             int? groupId,
@@ -328,7 +326,6 @@ class _$AuthenticatedImpl implements Authenticated {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(Authenticated value) authenticate,
-    required TResult Function(_AppStateChanged value) appStateChanged,
     required TResult Function(UserUpdated value) updateUser,
     required TResult Function(Unauthenticated value) unauthenticate,
   }) {
@@ -339,7 +336,6 @@ class _$AuthenticatedImpl implements Authenticated {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(Authenticated value)? authenticate,
-    TResult? Function(_AppStateChanged value)? appStateChanged,
     TResult? Function(UserUpdated value)? updateUser,
     TResult? Function(Unauthenticated value)? unauthenticate,
   }) {
@@ -350,7 +346,6 @@ class _$AuthenticatedImpl implements Authenticated {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(Authenticated value)? authenticate,
-    TResult Function(_AppStateChanged value)? appStateChanged,
     TResult Function(UserUpdated value)? updateUser,
     TResult Function(Unauthenticated value)? unauthenticate,
     required TResult orElse(),
@@ -371,217 +366,11 @@ abstract class Authenticated implements AuthHyEvent {
   PhoneModel? get user;
   String? get token;
   bool get isAuthenticated;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of AuthHyEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AuthenticatedImplCopyWith<_$AuthenticatedImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$$AppStateChangedImplCopyWith<$Res> {
-  factory _$$AppStateChangedImplCopyWith(_$AppStateChangedImpl value,
-          $Res Function(_$AppStateChangedImpl) then) =
-      __$$AppStateChangedImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({AppState newState});
-}
-
-/// @nodoc
-class __$$AppStateChangedImplCopyWithImpl<$Res>
-    extends _$AuthHyEventCopyWithImpl<$Res, _$AppStateChangedImpl>
-    implements _$$AppStateChangedImplCopyWith<$Res> {
-  __$$AppStateChangedImplCopyWithImpl(
-      _$AppStateChangedImpl _value, $Res Function(_$AppStateChangedImpl) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? newState = null,
-  }) {
-    return _then(_$AppStateChangedImpl(
-      null == newState
-          ? _value.newState
-          : newState // ignore: cast_nullable_to_non_nullable
-              as AppState,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$AppStateChangedImpl implements _AppStateChanged {
-  const _$AppStateChangedImpl(this.newState);
-
-  @override
-  final AppState newState;
-
-  @override
-  String toString() {
-    return 'AuthHyEvent.appStateChanged(newState: $newState)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$AppStateChangedImpl &&
-            (identical(other.newState, newState) ||
-                other.newState == newState));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, newState);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$AppStateChangedImplCopyWith<_$AppStateChangedImpl> get copyWith =>
-      __$$AppStateChangedImplCopyWithImpl<_$AppStateChangedImpl>(
-          this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(
-            PhoneModel? user, String? token, bool isAuthenticated)
-        authenticate,
-    required TResult Function(AppState newState) appStateChanged,
-    required TResult Function(
-            int? adminPhoneId,
-            int? groupId,
-            String? groupName,
-            String? groupCheck,
-            double? groupLat,
-            double? groupLon,
-            String? type,
-            bool? customCheck,
-            String? customCheckForm,
-            String? dayType,
-            String? dayForm,
-            bool? restPact,
-            int? restMinutes,
-            bool? flex,
-            double? hoursWeek,
-            double? hoursYear,
-            String? lastSign,
-            String? token)
-        updateUser,
-    required TResult Function() unauthenticate,
-  }) {
-    return appStateChanged(newState);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(PhoneModel? user, String? token, bool isAuthenticated)?
-        authenticate,
-    TResult? Function(AppState newState)? appStateChanged,
-    TResult? Function(
-            int? adminPhoneId,
-            int? groupId,
-            String? groupName,
-            String? groupCheck,
-            double? groupLat,
-            double? groupLon,
-            String? type,
-            bool? customCheck,
-            String? customCheckForm,
-            String? dayType,
-            String? dayForm,
-            bool? restPact,
-            int? restMinutes,
-            bool? flex,
-            double? hoursWeek,
-            double? hoursYear,
-            String? lastSign,
-            String? token)?
-        updateUser,
-    TResult? Function()? unauthenticate,
-  }) {
-    return appStateChanged?.call(newState);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(PhoneModel? user, String? token, bool isAuthenticated)?
-        authenticate,
-    TResult Function(AppState newState)? appStateChanged,
-    TResult Function(
-            int? adminPhoneId,
-            int? groupId,
-            String? groupName,
-            String? groupCheck,
-            double? groupLat,
-            double? groupLon,
-            String? type,
-            bool? customCheck,
-            String? customCheckForm,
-            String? dayType,
-            String? dayForm,
-            bool? restPact,
-            int? restMinutes,
-            bool? flex,
-            double? hoursWeek,
-            double? hoursYear,
-            String? lastSign,
-            String? token)?
-        updateUser,
-    TResult Function()? unauthenticate,
-    required TResult orElse(),
-  }) {
-    if (appStateChanged != null) {
-      return appStateChanged(newState);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(Authenticated value) authenticate,
-    required TResult Function(_AppStateChanged value) appStateChanged,
-    required TResult Function(UserUpdated value) updateUser,
-    required TResult Function(Unauthenticated value) unauthenticate,
-  }) {
-    return appStateChanged(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(Authenticated value)? authenticate,
-    TResult? Function(_AppStateChanged value)? appStateChanged,
-    TResult? Function(UserUpdated value)? updateUser,
-    TResult? Function(Unauthenticated value)? unauthenticate,
-  }) {
-    return appStateChanged?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(Authenticated value)? authenticate,
-    TResult Function(_AppStateChanged value)? appStateChanged,
-    TResult Function(UserUpdated value)? updateUser,
-    TResult Function(Unauthenticated value)? unauthenticate,
-    required TResult orElse(),
-  }) {
-    if (appStateChanged != null) {
-      return appStateChanged(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _AppStateChanged implements AuthHyEvent {
-  const factory _AppStateChanged(final AppState newState) =
-      _$AppStateChangedImpl;
-
-  AppState get newState;
-  @JsonKey(ignore: true)
-  _$$AppStateChangedImplCopyWith<_$AppStateChangedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -620,6 +409,8 @@ class __$$UserUpdatedImplCopyWithImpl<$Res>
       _$UserUpdatedImpl _value, $Res Function(_$UserUpdatedImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of AuthHyEvent
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -843,7 +634,9 @@ class _$UserUpdatedImpl implements UserUpdated {
       lastSign,
       token);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AuthHyEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$UserUpdatedImplCopyWith<_$UserUpdatedImpl> get copyWith =>
@@ -855,7 +648,6 @@ class _$UserUpdatedImpl implements UserUpdated {
     required TResult Function(
             PhoneModel? user, String? token, bool isAuthenticated)
         authenticate,
-    required TResult Function(AppState newState) appStateChanged,
     required TResult Function(
             int? adminPhoneId,
             int? groupId,
@@ -904,7 +696,6 @@ class _$UserUpdatedImpl implements UserUpdated {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(PhoneModel? user, String? token, bool isAuthenticated)?
         authenticate,
-    TResult? Function(AppState newState)? appStateChanged,
     TResult? Function(
             int? adminPhoneId,
             int? groupId,
@@ -953,7 +744,6 @@ class _$UserUpdatedImpl implements UserUpdated {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(PhoneModel? user, String? token, bool isAuthenticated)?
         authenticate,
-    TResult Function(AppState newState)? appStateChanged,
     TResult Function(
             int? adminPhoneId,
             int? groupId,
@@ -1005,7 +795,6 @@ class _$UserUpdatedImpl implements UserUpdated {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(Authenticated value) authenticate,
-    required TResult Function(_AppStateChanged value) appStateChanged,
     required TResult Function(UserUpdated value) updateUser,
     required TResult Function(Unauthenticated value) unauthenticate,
   }) {
@@ -1016,7 +805,6 @@ class _$UserUpdatedImpl implements UserUpdated {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(Authenticated value)? authenticate,
-    TResult? Function(_AppStateChanged value)? appStateChanged,
     TResult? Function(UserUpdated value)? updateUser,
     TResult? Function(Unauthenticated value)? unauthenticate,
   }) {
@@ -1027,7 +815,6 @@ class _$UserUpdatedImpl implements UserUpdated {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(Authenticated value)? authenticate,
-    TResult Function(_AppStateChanged value)? appStateChanged,
     TResult Function(UserUpdated value)? updateUser,
     TResult Function(Unauthenticated value)? unauthenticate,
     required TResult orElse(),
@@ -1078,7 +865,10 @@ abstract class UserUpdated implements AuthHyEvent {
   double? get hoursYear;
   String? get lastSign;
   String? get token;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of AuthHyEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$UserUpdatedImplCopyWith<_$UserUpdatedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -1097,6 +887,9 @@ class __$$UnauthenticatedImplCopyWithImpl<$Res>
   __$$UnauthenticatedImplCopyWithImpl(
       _$UnauthenticatedImpl _value, $Res Function(_$UnauthenticatedImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of AuthHyEvent
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -1124,7 +917,6 @@ class _$UnauthenticatedImpl implements Unauthenticated {
     required TResult Function(
             PhoneModel? user, String? token, bool isAuthenticated)
         authenticate,
-    required TResult Function(AppState newState) appStateChanged,
     required TResult Function(
             int? adminPhoneId,
             int? groupId,
@@ -1155,7 +947,6 @@ class _$UnauthenticatedImpl implements Unauthenticated {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(PhoneModel? user, String? token, bool isAuthenticated)?
         authenticate,
-    TResult? Function(AppState newState)? appStateChanged,
     TResult? Function(
             int? adminPhoneId,
             int? groupId,
@@ -1186,7 +977,6 @@ class _$UnauthenticatedImpl implements Unauthenticated {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(PhoneModel? user, String? token, bool isAuthenticated)?
         authenticate,
-    TResult Function(AppState newState)? appStateChanged,
     TResult Function(
             int? adminPhoneId,
             int? groupId,
@@ -1220,7 +1010,6 @@ class _$UnauthenticatedImpl implements Unauthenticated {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(Authenticated value) authenticate,
-    required TResult Function(_AppStateChanged value) appStateChanged,
     required TResult Function(UserUpdated value) updateUser,
     required TResult Function(Unauthenticated value) unauthenticate,
   }) {
@@ -1231,7 +1020,6 @@ class _$UnauthenticatedImpl implements Unauthenticated {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(Authenticated value)? authenticate,
-    TResult? Function(_AppStateChanged value)? appStateChanged,
     TResult? Function(UserUpdated value)? updateUser,
     TResult? Function(Unauthenticated value)? unauthenticate,
   }) {
@@ -1242,7 +1030,6 @@ class _$UnauthenticatedImpl implements Unauthenticated {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(Authenticated value)? authenticate,
-    TResult Function(_AppStateChanged value)? appStateChanged,
     TResult Function(UserUpdated value)? updateUser,
     TResult Function(Unauthenticated value)? unauthenticate,
     required TResult orElse(),
@@ -1264,7 +1051,9 @@ mixin _$AuthHyState {
   PhoneModel? get user => throw _privateConstructorUsedError;
   String? get token => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AuthHyState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $AuthHyStateCopyWith<AuthHyState> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -1288,6 +1077,8 @@ class _$AuthHyStateCopyWithImpl<$Res, $Val extends AuthHyState>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of AuthHyState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1331,6 +1122,8 @@ class __$$AuthHyStateImplCopyWithImpl<$Res>
       _$AuthHyStateImpl _value, $Res Function(_$AuthHyStateImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of AuthHyState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1387,7 +1180,9 @@ class _$AuthHyStateImpl implements _AuthHyState {
   @override
   int get hashCode => Object.hash(runtimeType, isAuthenticated, user, token);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AuthHyState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$AuthHyStateImplCopyWith<_$AuthHyStateImpl> get copyWith =>
@@ -1406,8 +1201,11 @@ abstract class _AuthHyState implements AuthHyState {
   PhoneModel? get user;
   @override
   String? get token;
+
+  /// Create a copy of AuthHyState
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AuthHyStateImplCopyWith<_$AuthHyStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -30,8 +30,12 @@ mixin _$ChatMessageEntity {
   @JsonKey(name: "created_at")
   String get createdAt => throw _privateConstructorUsedError;
 
+  /// Serializes this ChatMessageEntity to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ChatMessageEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ChatMessageEntityCopyWith<ChatMessageEntity> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -61,6 +65,8 @@ class _$ChatMessageEntityCopyWithImpl<$Res, $Val extends ChatMessageEntity>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ChatMessageEntity
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -125,6 +131,8 @@ class __$$ChatMessageEntityImplCopyWithImpl<$Res>
       $Res Function(_$ChatMessageEntityImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ChatMessageEntity
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -214,12 +222,14 @@ class _$ChatMessageEntityImpl extends _ChatMessageEntity {
                 other.createdAt == createdAt));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, id, chatId, userId, message, read, createdAt);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ChatMessageEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ChatMessageEntityImplCopyWith<_$ChatMessageEntityImpl> get copyWith =>
@@ -263,8 +273,11 @@ abstract class _ChatMessageEntity extends ChatMessageEntity {
   @override
   @JsonKey(name: "created_at")
   String get createdAt;
+
+  /// Create a copy of ChatMessageEntity
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ChatMessageEntityImplCopyWith<_$ChatMessageEntityImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -38,12 +38,22 @@ class SignServices extends ApiService {
     }
   }
 
-  Future<ApiResponseModel<String?>> getActualStatus(
+  Future<ApiResponseModel<Map<String, dynamic>?>> getActualStatus(
       PhoneModel phoneModel) async {
-    return await apiRequest<String?>(
+    return await apiRequest<Map<String, dynamic>?>(
       endpoint: ApiConstants.statusInfo,
       data: phoneModel.toJson(),
-      fromJson: (dynamic json) => json != null ? json.toString() : null,
+      fromJson: (dynamic json) {
+        if (json is Map) {
+          return Map<String, dynamic>.from(
+              json.map((key, value) => MapEntry(key.toString(), value))
+          );
+        } else if (json == null) {
+          return null;
+        }
+        print("WARN: Expected Map or null in fromJson for getActualStatus, got ${json.runtimeType}");
+        return null;
+      },
     );
   }
 }

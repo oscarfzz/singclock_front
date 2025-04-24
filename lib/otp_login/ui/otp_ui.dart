@@ -4,10 +4,11 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:signclock/api_services/login_service.dart';
 import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
 import 'package:signclock/constant/assets.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:signclock/constant/theme.dart';
+import 'package:signclock/model/api_response_model.dart';
 import 'package:signclock/model/phone_model.dart';
-// import 'package:signclock/otp_login/repository/auth_repo.dart' as authRepo;
 import 'package:signclock/otp_login/ui/login_layout.dart';
 import 'package:signclock/widgets/boton_redondeado.dart';
 import 'package:signclock/widgets/backgroud_wd.dart';
@@ -15,15 +16,11 @@ import 'package:signclock/widgets/backgroud_wd.dart';
 class OtpUi extends StatefulWidget {
   final LoginLayoutState parentState;
   final String? phoneNumberTemp;
-  final String? tokenTemp;
 
-  // final String myToken;
-
-  OtpUi({
+  const OtpUi({
     super.key,
     required this.parentState,
     required this.phoneNumberTemp,
-    this.tokenTemp,
   });
 
   @override
@@ -53,20 +50,19 @@ class _OtpUiState extends State<OtpUi> {
     String phoneCodeOtp = phoneCodeController.text.toString();
 
     try {
-      // responseData puede ser Map o null ¿como lo manejo?
-      // Map<String, dynamic> responseData =
-      //     await authRepo.otp(widget.phoneNumberTemp, phoneCodeOtp);
-      final response =
+      final ApiResponseModel<Map<String, dynamic>> response =
           await _loginService.otp(widget.phoneNumberTemp!, phoneCodeOtp);
-
-      if (response.status == "success") {
-        // Pasa el token recibido de la etapa anterior (Login), no el de la respuesta OTP (que es null)
-        // _responseOk(PhoneModel.fromJson(response.data!), response.token); // Original
-        _responseOk(PhoneModel.fromJson(response.data!), widget.tokenTemp);
-        return;
+      if (kDebugMode) {
+        print(
+            "Response from /otp: Status=${response.status}, Token=${response.token}, Message=${response.msg}, Data=${response.data}");
       }
 
-      _responseKo(response.msg);
+      if (response.status == "success" && response.token != null) {
+        PhoneModel phoneModel = PhoneModel.fromJson(response.data!);
+        _responseOk(phoneModel, response.token);
+      } else {
+        _responseKo(response.msg);
+      }
     } catch (e) {
       _responseKo(e.toString());
     }

@@ -1,11 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:signclock/api_services/login_service.dart';
 import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
 import 'package:signclock/constant/assets.dart';
 import 'package:signclock/constant/theme.dart';
-
-// import 'package:signclock/otp_login/repository/auth_repo.dart' as authRepo;
+import 'package:signclock/model/api_response_model.dart';
 import 'package:signclock/otp_login/ui/login_layout.dart';
 import 'package:signclock/sign/ui/widgets/input_round_telephone.dart';
 import 'package:signclock/widgets/backgroud_wd.dart';
@@ -42,29 +42,29 @@ class _LoginUiState extends State<LoginUi> {
     _loginService = LoginService(_authHyBloc);
   }
 
-  void _startLoginProcess(String parsableNumber, int optCode) async {
+  void _startLoginProcess(String parsableNumber) async {
     setState(() {
       _isWaiting = true;
+      _errorMsg = null;
     });
 
-    // Map<String, dynamic> responseData =
-    //     await authRepo.login(parsableNumber, optCode);
-    var response = await _loginService.login(parsableNumber, optCode);
-    if (response.status == 'success') {
-      if (response.data != null) {
-        _responseOk(response.data!['phone_number']?.toString(), response.token);
-      } else {
-        _responseKo("Respuesta exitosa pero sin datos.");
-      }
-      return;
+    ApiResponseModel<Map<String, dynamic>> response =
+        await _loginService.authenticatePhone(parsableNumber);
+
+    if (kDebugMode) {
+      print(
+          "Response from /authenticate: Status=${response.status}, Message=${response.msg}, Data=${response.data}");
     }
-    _responseKo(response.msg);
+
+    if (response.status == 'success') {
+      _responseOk(parsableNumber);
+    } else {
+      _responseKo(response.msg ?? "Error al enviar OTP.");
+    }
   }
 
-  void _responseOk(String? phoneNumber, String? token) {
-    Future.delayed(const Duration(seconds: 2), () {
-      widget.parentState.notifyChangeToOtpStep(phoneNumber, token);
-    });
+  void _responseOk(String phoneNumber) {
+    widget.parentState.notifyChangeToOtpStep(phoneNumber);
   }
 
   void _responseKo(String msg) {
@@ -182,7 +182,7 @@ class _LoginUiState extends State<LoginUi> {
       key: const Key('loginForm_submit_botonRedondeado'),
       text: "Enviar",
       press: () {
-        _startLoginProcess(parsableNumber, 1111);
+        _startLoginProcess(parsableNumber);
       },
     );
   }

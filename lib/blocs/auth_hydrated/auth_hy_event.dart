@@ -8,9 +8,6 @@ class AuthHyEvent with _$AuthHyEvent {
     required bool isAuthenticated,
   }) = Authenticated;
 
-  const factory AuthHyEvent.appStateChanged(AppState newState) =
-      _AppStateChanged;
-
   const factory AuthHyEvent.updateUser({
     int? adminPhoneId,
     int? groupId,

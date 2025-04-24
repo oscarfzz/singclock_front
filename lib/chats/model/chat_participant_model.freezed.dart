@@ -28,8 +28,12 @@ mixin _$ChatParticipantEntity {
   int get userId => throw _privateConstructorUsedError;
   UserEntity get user => throw _privateConstructorUsedError;
 
+  /// Serializes this ChatParticipantEntity to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ChatParticipantEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ChatParticipantEntityCopyWith<ChatParticipantEntity> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -60,6 +64,8 @@ class _$ChatParticipantEntityCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ChatParticipantEntity
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -88,6 +94,8 @@ class _$ChatParticipantEntityCopyWithImpl<$Res,
     ) as $Val);
   }
 
+  /// Create a copy of ChatParticipantEntity
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $UserEntityCopyWith<$Res> get user {
@@ -125,6 +133,8 @@ class __$$ChatParticipantEntityImplCopyWithImpl<$Res>
       $Res Function(_$ChatParticipantEntityImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ChatParticipantEntity
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -193,11 +203,13 @@ class _$ChatParticipantEntityImpl implements _ChatParticipantEntity {
             (identical(other.user, user) || other.user == user));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, idGrp, userId, user);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ChatParticipantEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ChatParticipantEntityImplCopyWith<_$ChatParticipantEntityImpl>
@@ -232,8 +244,11 @@ abstract class _ChatParticipantEntity implements ChatParticipantEntity {
   int get userId;
   @override
   UserEntity get user;
+
+  /// Create a copy of ChatParticipantEntity
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ChatParticipantEntityImplCopyWith<_$ChatParticipantEntityImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

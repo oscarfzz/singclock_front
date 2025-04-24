@@ -28,8 +28,12 @@ mixin _$CreateChatMessageRequest {
   String get crud => throw _privateConstructorUsedError;
   String get message => throw _privateConstructorUsedError;
 
+  /// Serializes this CreateChatMessageRequest to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of CreateChatMessageRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $CreateChatMessageRequestCopyWith<CreateChatMessageRequest> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -58,6 +62,8 @@ class _$CreateChatMessageRequestCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of CreateChatMessageRequest
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -113,6 +119,8 @@ class __$$CreateChatMessageRequestImplCopyWithImpl<$Res>
       $Res Function(_$CreateChatMessageRequestImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of CreateChatMessageRequest
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -181,11 +189,13 @@ class _$CreateChatMessageRequestImpl implements _CreateChatMessageRequest {
             (identical(other.message, message) || other.message == message));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, chatId, userId, crud, message);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of CreateChatMessageRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$CreateChatMessageRequestImplCopyWith<_$CreateChatMessageRequestImpl>
@@ -220,8 +230,11 @@ abstract class _CreateChatMessageRequest implements CreateChatMessageRequest {
   String get crud;
   @override
   String get message;
+
+  /// Create a copy of CreateChatMessageRequest
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$CreateChatMessageRequestImplCopyWith<_$CreateChatMessageRequestImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

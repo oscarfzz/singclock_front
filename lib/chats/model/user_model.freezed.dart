@@ -23,8 +23,12 @@ mixin _$UserEntity {
   int get id => throw _privateConstructorUsedError;
   String get username => throw _privateConstructorUsedError;
 
+  /// Serializes this UserEntity to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of UserEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $UserEntityCopyWith<UserEntity> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -48,6 +52,8 @@ class _$UserEntityCopyWithImpl<$Res, $Val extends UserEntity>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of UserEntity
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -86,6 +92,8 @@ class __$$UserEntityImplCopyWithImpl<$Res>
       _$UserEntityImpl _value, $Res Function(_$UserEntityImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of UserEntity
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -133,11 +141,13 @@ class _$UserEntityImpl extends _UserEntity {
                 other.username == username));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, username);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of UserEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$UserEntityImplCopyWith<_$UserEntityImpl> get copyWith =>
@@ -163,8 +173,11 @@ abstract class _UserEntity extends UserEntity {
   int get id;
   @override
   String get username;
+
+  /// Create a copy of UserEntity
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$UserEntityImplCopyWith<_$UserEntityImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -179,8 +192,12 @@ mixin _$AuthUser {
       throw _privateConstructorUsedError; //required UserEntity user,
   String get token => throw _privateConstructorUsedError;
 
+  /// Serializes this AuthUser to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of AuthUser
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $AuthUserCopyWith<AuthUser> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -203,6 +220,8 @@ class _$AuthUserCopyWithImpl<$Res, $Val extends AuthUser>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of AuthUser
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -241,6 +260,8 @@ class __$$AuthUserImplCopyWithImpl<$Res>
       _$AuthUserImpl _value, $Res Function(_$AuthUserImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of AuthUser
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -288,11 +309,13 @@ class _$AuthUserImpl implements _AuthUser {
             (identical(other.token, token) || other.token == token));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, user, token);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AuthUser
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$AuthUserImplCopyWith<_$AuthUserImpl> get copyWith =>
@@ -315,11 +338,14 @@ abstract class _AuthUser implements AuthUser {
       _$AuthUserImpl.fromJson;
 
   @override
-  PhoneModel get user;
-  @override //required UserEntity user,
-  String get token;
+  PhoneModel get user; //required UserEntity user,
   @override
-  @JsonKey(ignore: true)
+  String get token;
+
+  /// Create a copy of AuthUser
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AuthUserImplCopyWith<_$AuthUserImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
