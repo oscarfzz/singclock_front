@@ -149,7 +149,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 ? _buildNoCompanyMessage()
                                 : _buildForm(),
                         const SizedBox(height: 20),
-                        const StaticInfoWidget(user: user),
+                        StaticInfoWidget(user: user),
                       ],
                     ),
                   ),

@@ -6,7 +6,7 @@ class ApiConstants {
 
   // **** New endpoints ****
   // static const String baseUrl = 'https://ls.signclock.com/api';
-  static const String baseUrl = 'https://localhost/api';
+  static const String baseUrl = 'http://192.168.1.182:8000/api';
   // static const String baseUrl = 'https://172.28.97.8/api';
   static const String login = '$baseUrl/authenticate';
   static const String otp = '$baseUrl/otp';

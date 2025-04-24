@@ -32,6 +32,7 @@ class ContentLoading extends StatelessWidget {
           ),
         ),
         FloatingActionButton(
+            heroTag: null,
             onPressed: () => context.read<LocationBloc>().add(CancelEvent()))
       ],
     );

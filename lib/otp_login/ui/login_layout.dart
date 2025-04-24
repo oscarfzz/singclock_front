@@ -20,6 +20,7 @@ class LoginLayout extends StatefulWidget {
 class LoginLayoutState extends State<LoginLayout> {
   bool _isInLoginStep = true;
   String? _phoneNumberTemp;
+  String? _tokenTemp;
 
   late AuthHyBloc _authHyBloc;
 
@@ -30,44 +31,35 @@ class LoginLayoutState extends State<LoginLayout> {
     super.initState();
   }
 
-  void notifyChangeToOtpStep(String? phoneNumberTemp) {
+  void notifyChangeToOtpStep(String? phoneNumberTemp, String? tokenTemp) {
     setState(() {
       _isInLoginStep = false;
       _phoneNumberTemp = phoneNumberTemp;
+      _tokenTemp = tokenTemp;
     });
   }
 
-  void notifySuccessLogin(PhoneModel phoneModelTemp, String token) {
+  void notifySuccessLogin(PhoneModel phoneModelTemp, String? token) {
     _authHyBloc.add(Authenticated(
         isAuthenticated: true, token: token, user: phoneModelTemp));
-
-    // AppState().authenticate(TelInfoModel.fromJson(telInfoModelTemp));
     AppState().authenticate(phoneModelTemp, token);
-    Navigator.pushNamed(context, RootScreen.ROUTE);
   }
 
   @override
   Widget build(Object context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<AuthHyBloc>(
-          create: (context) => _authHyBloc,
-        )
-      ],
-      child: Scaffold(
-        body: _isInLoginStep
-            ? LoginUi(parentState: this)
-            : OtpUi(
+    return Scaffold(
+      body: _isInLoginStep
+          ? LoginUi(parentState: this)
+          : OtpUi(
                 parentState: this,
-                phoneNumberTemp: _phoneNumberTemp!,
+                phoneNumberTemp: _phoneNumberTemp,
+                tokenTemp: _tokenTemp,
               ),
-      ),
     );
   }
 
   @override
   void dispose() {
-    _authHyBloc.close();
     super.dispose();
   }
 }

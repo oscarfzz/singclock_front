@@ -43,3 +43,15 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Android build cache
+/android/app/.cxx/
+
+# Flutter ephemeral files
+*/flutter/ephemeral/
+
+# Generated plugin registrant (macOS) - Optional but common
+/macos/Flutter/GeneratedPluginRegistrant.swift
+
+# Documentation (if generated or not needed in VCS)
+/docs/

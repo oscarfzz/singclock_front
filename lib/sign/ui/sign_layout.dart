@@ -139,6 +139,7 @@ class SignLayout extends StatelessWidget {
 
   Widget _buildManualSignButton(BuildContext context) {
     return FloatingActionButton.extended(
+      heroTag: null,
       onPressed: () =>
           showDateTimeDialog(context, context.read<AuthHyBloc>().state.user!),
       backgroundColor: kPrimaryColor,

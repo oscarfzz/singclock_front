@@ -33,11 +33,13 @@ class _ChatListScreenState extends State<ChatListScreen> {
   @override
   void initState() {
     super.initState();
-
     _authHyBloc = context.read<AuthHyBloc>();
     _chatService = ChatService(_authHyBloc);
-
-    _updateData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _updateData();
+      }
+    });
   }
 
   Future<void> _updateData() async {
@@ -82,6 +84,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
     return Scaffold(
       body: HeaderLogoLayout(child: _buildGroupsList(context)),
       floatingActionButton: FloatingActionButton(
+        heroTag: null,
         backgroundColor: kPrimaryColor,
         shape: const CircleBorder(),
         child: const Icon(

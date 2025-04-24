@@ -14,7 +14,8 @@ import 'package:signclock/widgets/backgroud_wd.dart';
 
 class OtpUi extends StatefulWidget {
   final LoginLayoutState parentState;
-  final String phoneNumberTemp;
+  final String? phoneNumberTemp;
+  final String? tokenTemp;
 
   // final String myToken;
 
@@ -22,6 +23,7 @@ class OtpUi extends StatefulWidget {
     super.key,
     required this.parentState,
     required this.phoneNumberTemp,
+    this.tokenTemp,
   });
 
   @override
@@ -43,6 +45,11 @@ class _OtpUiState extends State<OtpUi> {
   }
 
   void _startSubmit() async {
+    if (widget.phoneNumberTemp == null) {
+      _responseKo("Error: Número de teléfono no disponible.");
+      return;
+    }
+
     String phoneCodeOtp = phoneCodeController.text.toString();
 
     try {
@@ -50,12 +57,12 @@ class _OtpUiState extends State<OtpUi> {
       // Map<String, dynamic> responseData =
       //     await authRepo.otp(widget.phoneNumberTemp, phoneCodeOtp);
       final response =
-          await _loginService.otp(widget.phoneNumberTemp, phoneCodeOtp);
+          await _loginService.otp(widget.phoneNumberTemp!, phoneCodeOtp);
 
       if (response.status == "success") {
-        // controlo en otp, nunca llegará null
-
-        _responseOk(PhoneModel.fromJson(response.data!), response.token!);
+        // Pasa el token recibido de la etapa anterior (Login), no el de la respuesta OTP (que es null)
+        // _responseOk(PhoneModel.fromJson(response.data!), response.token); // Original
+        _responseOk(PhoneModel.fromJson(response.data!), widget.tokenTemp);
         return;
       }
 
@@ -65,7 +72,7 @@ class _OtpUiState extends State<OtpUi> {
     }
   }
 
-  void _responseOk(PhoneModel data, String token) {
+  void _responseOk(PhoneModel data, String? token) {
     widget.parentState.notifySuccessLogin(data, token);
   }
 
@@ -77,6 +84,14 @@ class _OtpUiState extends State<OtpUi> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.phoneNumberTemp == null) {
+      return const Scaffold(
+        body: Center(
+          child: Text("Error: No se recibió el número de teléfono."),
+        ),
+      );
+    }
+
     Size size = MediaQuery.of(context).size;
 
     final logo = Image.asset(

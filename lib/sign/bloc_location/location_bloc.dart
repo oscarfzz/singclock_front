@@ -25,16 +25,11 @@ class LocationBloc extends HydratedBloc<LocationEvent, LocationState> {
   final AuthHyBloc authBloc;
   final SignServices signServices;
 
-  late final PhoneModel phoneModel;
-  late final String token;
-
   LocationBloc({
     required this.locationRepository,
     required this.authBloc,
     required this.signServices,
   }) : super(const LocationState()) {
-    _isAuthenticated();
-
     on<InitEvent>(_handleInitEvent);
     on<InitWorkingEvent>(_handleSignEvent);
     on<InitRestingEvent>(_handleSignEvent);
@@ -43,21 +38,17 @@ class LocationBloc extends HydratedBloc<LocationEvent, LocationState> {
     on<CancelEvent>(_handleCancelEvent);
   }
 
-  void _isAuthenticated() {
-    if (authBloc.state.token == null || authBloc.state.user == null) {
-      authBloc.add(const Unauthenticated());
-      throw const AppError('No autenticado');
-    } else {
-      phoneModel = authBloc.state.user!;
-      token = authBloc.state.token!;
-    }
-  }
-
   Future<void> _handleInitEvent(
       InitEvent event, Emitter<LocationState> emit) async {
+    final currentUser = authBloc.state.user;
+    if (currentUser == null) {
+      _emitErrorState(const AppError('Usuario no disponible en InitEvent'), emit);
+      return;
+    }
+    
     _emitLoadingState(emit);
     try {
-      _emitStateFromLastSign(phoneModel.lastSign, emit);
+      _emitStateFromLastSign(currentUser.lastSign, emit);
     } catch (e) {
       _emitErrorState(e, emit);
     }
@@ -96,8 +87,13 @@ class LocationBloc extends HydratedBloc<LocationEvent, LocationState> {
 
   SignModel _buildSignModel(
       LocationEvent event, CurrentUserLocationEntity currentLocation) {
+    final currentPhoneModel = authBloc.state.user;
+    if (currentPhoneModel == null) {
+      throw StateError('PhoneModel es null en _buildSignModel');
+    }
+
     return SignModel(
-      groupPhoneId: phoneModel.groupPhoneId,
+      groupPhoneId: currentPhoneModel.groupPhoneId,
       currentdate: DateTime.now(),
       currenttime: _getFormattedTime(),
       lat: currentLocation.latitude,
@@ -109,6 +105,14 @@ class LocationBloc extends HydratedBloc<LocationEvent, LocationState> {
 
   void _emitStateFromLastSign(String lastSign, Emitter<LocationState> emit,
       [CurrentUserLocationEntity? currentLocation]) async {
+    final currentPhoneModel = authBloc.state.user;
+    if (currentPhoneModel == null) {
+       if(!emit.isDone){
+         _emitErrorState(const AppError('Usuario no disponible en _emitStateFromLastSign'), emit);
+       }
+       return;
+    }
+    
     final status = {
           'E': LocationStateStatus.working,
           'DE': LocationStateStatus.working,
@@ -124,8 +128,7 @@ class LocationBloc extends HydratedBloc<LocationEvent, LocationState> {
     ));
 
     try {
-      // Obtenemos el estado actual desde el servidor
-      final apiResponse = await signServices.getActualStatus(phoneModel);
+      final apiResponse = await signServices.getActualStatus(currentPhoneModel);
 
       if (apiResponse.status == "success" && apiResponse.data != null) {
         final serverStatus = {
@@ -146,7 +149,6 @@ class LocationBloc extends HydratedBloc<LocationEvent, LocationState> {
         ));}
       }
     } catch (error) {
-      // Si ocurre un error al obtener el estado del servidor, no afecta el estado emitido inicialmente
       if(!emit.isDone){
         emit(state.copyWith(
           status: LocationStateStatus.error,

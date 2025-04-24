@@ -31,7 +31,7 @@ class AppState {
     _onChange = onChange;
   }
 
-  void authenticate(PhoneModel telInfo, String token) {
+  void authenticate(PhoneModel telInfo, String? token) {
     _status = AppStatus.identified;
     _phone = telInfo;
     _token = token; // Establecemos el token al autenticar

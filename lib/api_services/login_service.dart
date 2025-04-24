@@ -13,7 +13,14 @@ class LoginService extends ApiService {
         endpoint: ApiConstants.login,
         data: {"phone_number": phoneNumber, "phone_code": phoneCode},
         tokenHeader: false,
-        fromJson: (json) => json as Map<String, dynamic>);
+        fromJson: (json) {
+          if (json is Map) {
+            return Map<String, dynamic>.from(json.map((key, value) => MapEntry(key.toString(), value)));
+          } else if (json == null){
+             return <String, dynamic>{};
+          }
+          throw FormatException("Respuesta JSON inesperada: $json");
+        });
   }
 
   // si hay header['X-Token'] se agrega el token a los headers
@@ -23,6 +30,13 @@ class LoginService extends ApiService {
         endpoint: ApiConstants.otp,
         data: {"phone_number": phoneNumber, "phone_code": otpCode},
         tokenHeader: false,
-        fromJson: (json) => json as Map<String, dynamic>);
+        fromJson: (json) {
+          if (json is Map) {
+            return Map<String, dynamic>.from(json.map((key, value) => MapEntry(key.toString(), value)));
+          } else if (json == null){
+             return <String, dynamic>{};
+          }
+          throw FormatException("Respuesta JSON inesperada: $json");
+        });
   }
 }

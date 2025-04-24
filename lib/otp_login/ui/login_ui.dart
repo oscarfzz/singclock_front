@@ -51,15 +51,19 @@ class _LoginUiState extends State<LoginUi> {
     //     await authRepo.login(parsableNumber, optCode);
     var response = await _loginService.login(parsableNumber, optCode);
     if (response.status == 'success') {
-      _responseOk(response.data!['phone_number']);
+      if (response.data != null) {
+        _responseOk(response.data!['phone_number']?.toString(), response.token);
+      } else {
+        _responseKo("Respuesta exitosa pero sin datos.");
+      }
       return;
     }
     _responseKo(response.msg);
   }
 
-  void _responseOk(String? phoneNumber) {
+  void _responseOk(String? phoneNumber, String? token) {
     Future.delayed(const Duration(seconds: 2), () {
-      widget.parentState.notifyChangeToOtpStep(phoneNumber);
+      widget.parentState.notifyChangeToOtpStep(phoneNumber, token);
     });
   }
 

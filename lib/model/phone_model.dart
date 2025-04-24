@@ -118,32 +118,59 @@ class PhoneModel extends Equatable {
     );
   }
 
-  factory PhoneModel.fromJson(Map<String, dynamic> json) => PhoneModel(
-        phoneId: json["phone_id"],
-        phoneNumber: json["phone_number"],
-        userName: json["user_name"] ?? '',
-        type: json["type"] ?? '',
-        accept: json["accept"] ? true : false,
-        password: json["password"] ?? 0,
-        phoneCode: json["phone_code"] ?? '',
-        groupPhoneId: json["group_phone_id"] ?? 0,
-        groupId: json["group_id"] ?? 0,
-        groupName: json["group_name"] ?? '',
-        groupCheck: json["group_check"] ?? '',
-        groupLat: json["group_lat"] ?? .0,
-        groupLon: json["group_lon"] ?? .0,
-        adminPhoneId: json["admin_phone_id"] ?? 0,
-        customCheck: json["custom_check"] ? true : false,
-        customCheckForm: json["custom_check_form"] ?? '',
-        dayType: json["day_type"] ?? '',
-        dayForm: json["day_form"] ?? '',
-        restPact: json["rest_pact"] ? true : false,
-        restMinutes: json["rest_minutes"] ?? 0,
-        flex: json["flex"] ? true : false,
-        hoursWeek: json["hours_week"].toDouble(),
-        hoursYear: json["hours_year"].toDouble(),
-        lastSign: json["last_sign"] ?? '',
+  factory PhoneModel.fromJson(Map<String, dynamic> json) {
+    // Helper function to safely convert to double
+    double safeDouble(dynamic value) {
+       if (value is double) return value;
+       if (value is int) return value.toDouble();
+       if (value is String) return double.tryParse(value) ?? 0.0;
+       return 0.0; // Default value
+    }
+    // Helper function to safely convert to int
+    int safeInt(dynamic value) {
+       if (value is int) return value;
+       if (value is double) return value.toInt();
+       if (value is String) return int.tryParse(value) ?? 0;
+       return 0; // Default value
+    }
+     // Helper function to safely convert to bool
+    bool safeBool(dynamic value) {
+      if (value is bool) return value;
+      if (value is int) return value == 1;
+      if (value is String) {
+        final lower = value.toLowerCase();
+        return lower == 'true' || lower == '1';
+      }
+      return false; // Default value
+    }
+
+    return PhoneModel(
+        phoneId: safeInt(json["phone_id"]),
+        phoneNumber: json["phone_number"]?.toString() ?? '',
+        userName: json["user_name"]?.toString() ?? '',
+        type: json["type"]?.toString() ?? '',
+        accept: safeBool(json["accept"]),
+        password: safeInt(json["password"]),
+        phoneCode: json["phone_code"]?.toString() ?? '',
+        groupPhoneId: safeInt(json["group_phone_id"]),
+        groupId: safeInt(json["group_id"]),
+        groupName: json["group_name"]?.toString() ?? '',
+        groupCheck: json["group_check"]?.toString() ?? '',
+        groupLat: safeDouble(json["group_lat"]),
+        groupLon: safeDouble(json["group_lon"]),
+        adminPhoneId: safeInt(json["admin_phone_id"]),
+        customCheck: safeBool(json["custom_check"]),
+        customCheckForm: json["custom_check_form"]?.toString() ?? '',
+        dayType: json["day_type"]?.toString() ?? '',
+        dayForm: json["day_form"]?.toString() ?? '',
+        restPact: safeBool(json["rest_pact"]),
+        restMinutes: safeInt(json["rest_minutes"]),
+        flex: safeBool(json["flex"]),
+        hoursWeek: safeDouble(json["hours_week"]),
+        hoursYear: safeDouble(json["hours_year"]),
+        lastSign: json["last_sign"]?.toString() ?? '',
       );
+  }
 
   Map<String, dynamic> toJson() => {
         "phone_id": phoneId,

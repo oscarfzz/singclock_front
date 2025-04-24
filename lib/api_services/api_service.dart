@@ -10,9 +10,19 @@ import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
 
 class ApiService {
   final AuthHyBloc authBloc;
-  final Dio _dio = Dio()..options.validateStatus = (status) => status! < 500;
+  late final Dio _dio;
 
   ApiService(this.authBloc) {
+    final options = BaseOptions(
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 30),
+      validateStatus: (status) => status! < 500,
+      headers: {
+        "Accept": "application/json",
+      },
+    );
+    _dio = Dio(options);
+
     if (kDebugMode) {
       (_dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate =
           (client) {
@@ -32,8 +42,9 @@ class ApiService {
     try {
       if (tokenHeader) {
         final token = authBloc.state.token;
-        if (token == null) throw Exception('Token no disponible');
-        headers = {'X-Token': token, ...?headers};
+        if (token != null) {
+          headers = {'X-Token': token, ...?headers};
+        }
       }
 
       final response = await _dio.post(
@@ -42,39 +53,91 @@ class ApiService {
         options: Options(headers: {
           ...?headers,
           "Content-Type": "application/json",
-          "Accept": "application/json"
         }),
       );
 
-      if (response.statusCode == 200) {
-        return ApiResponseModel<T>.fromJson(
-          parseResponse(response),
-          fromJson,
-        );
+      if (kDebugMode) {
+        print("===== API Raw Response =====");
+        print("Endpoint: $endpoint");
+        print("Status Code: ${response.statusCode}");
+        print("Response Data: ${response.data}");
+        print("============================");
+      }
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseBody = response.data as Map<dynamic, dynamic>? ?? {};
+        final String? token = responseBody['token'] as String?;
+        
+        final Map<String, dynamic> dataMap;
+        if (responseBody['data'] is Map) {
+          dataMap = Map<String, dynamic>.from(
+              (responseBody['data'] as Map).map((key, value) => MapEntry(key.toString(), value))
+          );
+        } else {
+          dataMap = <String, dynamic>{};
+          if (kDebugMode) {
+            print("WARN: API response 'data' field was not a Map or was null.");
+          }
+        }
+
+        final T parsedData = fromJson(dataMap);
+        return ApiResponseModel<T>(
+            status: responseBody['status'] as String? ?? 'success',
+            msg: responseBody['msg'] as String? ?? '',
+            data: parsedData,
+            token: token);
       } else if (response.statusCode == 401) {
-        authBloc.add(Unauthenticated());
-        return ApiResponseModel<T>.fromJson(
-          handleError(("No autorizado"), response.statusCode),
-          fromJson,
-        );
+        if (kDebugMode) {
+          print("Received 401 Unauthorized. Triggering Unauthentication.");
+        }
+        authBloc.add(const Unauthenticated());
+        return ApiResponseModel<T>(
+            status: 'error',
+            msg: response.data?['msg'] ?? 'No autorizado o sesión expirada',
+            data: null);
       } else {
-        return ApiResponseModel<T>.fromJson(
-          handleError(
-              (response.data['msg'] ?? 'Sin respuesta'), response.statusCode),
-          fromJson,
-        );
+        String errorMsg = 'Error desconocido';
+        if (response.data is Map && response.data.containsKey('msg')) {
+          errorMsg = response.data['msg'];
+        } else if (response.data != null) {
+          errorMsg = response.data.toString();
+        }
+        if (kDebugMode) {
+          print("===== API Error Response =====");
+          print("Endpoint: $endpoint");
+          print("Status Code: ${response.statusCode}");
+          print("Response Data: ${response.data}");
+          print("=============================");
+        }
+        return ApiResponseModel<T>(
+            status: 'error',
+            msg: 'Error ${response.statusCode}: $errorMsg',
+            data: null);
       }
     } on DioException catch (e) {
-      return ApiResponseModel<T>.fromJson(
-        handleError(e.message ?? "Error de red"),
-        fromJson,
-      );
-    } catch (e) {
-      print("Error--->: $e");
-      return ApiResponseModel<T>.fromJson(
-        handleError("Error desconocido $e"),
-        fromJson,
-      );
+      if (kDebugMode) {
+        print("===== DioException =====");
+        print("Endpoint: $endpoint");
+        print("Error Type: ${e.type}");
+        print("Error Message: ${e.message}");
+        print("Response: ${e.response?.data}");
+        print("=======================");
+      }
+      return ApiResponseModel<T>(
+          status: 'error',
+          msg: 'Error de conexión (${e.type}): ${e.message}',
+          data: null);
+    } catch (e, stackTrace) {
+      if (kDebugMode) {
+        print("===== General Exception =====");
+        print("Endpoint: $endpoint");
+        print("Error Type: ${e.runtimeType}");
+        print("Error: ${e.toString()}");
+        print("StackTrace: $stackTrace");
+        print("============================");
+      }
+      return ApiResponseModel<T>(
+          status: 'error', msg: 'Error inesperado: ${e.toString()}', data: null);
     }
   }
 

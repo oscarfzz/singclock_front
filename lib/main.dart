@@ -62,35 +62,50 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Proporcionar el authBloc globalmente
     return BlocProvider<AuthHyBloc>.value(
-        value: authBloc,
-        child: SafeArea(
-            child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            brightness: Brightness.light,
-            primaryColor: kPrimaryColor,
-            primarySwatch: Palette.kToDark,
-          ),
-          initialRoute: _evalInitialRoute(),
-          routes: {
-            RootScreen.ROUTE: (context) => const RootScreen(),
-            LoginLayout.ROUTE: (context) => const LoginLayout(),
-          },
-        )));
-  }
-
-  // String _evalInitialRoute() => AppState().status == AppStatus.identified
-  //     ? RootScreen.ROUTE
-  //     : LoginLayout.ROUTE;
-
-  String _evalInitialRoute() {
-    // return AppState().status == AppStatus.identified
-    //     ? RootScreen.ROUTE
-    //     : LoginLayout.ROUTE;
-    return authBloc.state.isAuthenticated
-        ? RootScreen.ROUTE
-        : LoginLayout.ROUTE;
+      value: authBloc,
+      // Usar un Builder para obtener un context con acceso a AuthHyBloc
+      child: Builder(
+        builder: (context) {
+           // Usar MaterialApp dentro del Builder
+           return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              brightness: Brightness.light,
+              primaryColor: kPrimaryColor,
+              primarySwatch: Palette.kToDark,
+            ),
+            // Usar BlocListener para navegación dinámica
+            home: BlocListener<AuthHyBloc, AuthHyState>(
+              // Añadir listenWhen para evitar bucles si la navegación causa reconstrucción
+              listenWhen: (previous, current) => previous.isAuthenticated != current.isAuthenticated,
+              listener: (context, state) {
+                // Navega según el estado de autenticación
+                if (state.isAuthenticated) {
+                   // Solo navega si no estamos ya en RootScreen (o usa una forma más robusta de verificar)
+                   // Usaremos pushNamedAndRemoveUntil para asegurar limpieza
+                   Navigator.of(context).pushNamedAndRemoveUntil(RootScreen.ROUTE, (route) => false);
+                } else {
+                  // Si no está autenticado, siempre vamos a Login y eliminamos rutas anteriores.
+                   Navigator.of(context).pushNamedAndRemoveUntil(LoginLayout.ROUTE, (route) => false);
+                }
+              },
+              // El hijo inicial depende del estado inicial (similar a initialRoute)
+              // Accede al estado usando context.watch o context.read si no necesitas reconstruir aquí
+              child: context.watch<AuthHyBloc>().state.isAuthenticated 
+                     ? const RootScreen() 
+                     : const LoginLayout(),
+            ),
+            // Definir rutas para la navegación por nombre
+            routes: {
+              RootScreen.ROUTE: (context) => const RootScreen(),
+              LoginLayout.ROUTE: (context) => const LoginLayout(),
+            },
+          );
+        }
+      ),
+    );
   }
 }
 
