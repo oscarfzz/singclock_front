@@ -8,6 +8,7 @@
 .buildlog/
 .history
 .svn/
+migrate_working_dir/
 
 # IntelliJ related
 *.iml
@@ -31,8 +32,6 @@
 .pub/
 /build/
 
-# Web related
-
 # Symbolication related
 app.*.symbols
 
@@ -55,3 +54,44 @@ app.*.map.json
 
 # Documentation (if generated or not needed in VCS)
 /docs/
+
+# Generated code (Freezed/JSON Serializable)
+*.freezed.dart
+*.g.dart
+
+# Coverage reports from tests
+/coverage/
+
+# Fastlane related
+**/fastlane/report.xml
+**/fastlane/Preview.html
+**/fastlane/screenshots
+**/fastlane/test_output
+
+# FVM (Flutter version management)
+.fvm/flutter_sdk
+
+# Firebase
+.firebase/
+firebase_options.dart
+
+# iOS
+**/ios/Podfile.lock
+**/ios/.symlinks/
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/.generated/
+
+# Mason
+.mason/
+
+# Environment configuration
+.env
+.env.*
+
+# Web related
+lib/generated_plugin_registrant.dart
