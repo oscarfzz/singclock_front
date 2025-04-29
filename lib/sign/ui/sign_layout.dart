@@ -28,9 +28,14 @@ class SignLayout extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     final padding = MediaQuery.of(context).padding;
     final newHeight = size.height - padding.top - padding.bottom;
-    final hydratedInfo = context.read<AuthHyBloc>().state.user!;
 
-    context.read<LocationBloc>().add(InitEvent());
+    final AuthHyState authState = context.read<AuthHyBloc>().state;
+    final PhoneModel? hydratedInfo = authState.user;
+    try {
+      context.read<LocationBloc>().add(InitEvent());
+    } catch (e) {
+      // Ignorar errores silenciosamente
+    }
 
     return SingleChildScrollView(
       child: ConstrainedBox(
@@ -51,8 +56,11 @@ class SignLayout extends StatelessWidget {
                   _buildClock(newHeight),
                 ],
               ),
-              Positioned(
-                  right: 20, bottom: 20, child: _buildManualSignButton(context)),
+              if (hydratedInfo != null)
+                Positioned(
+                    right: 20,
+                    bottom: 20,
+                    child: _buildManualSignButton(context, hydratedInfo)),
             ],
           ),
         ),
@@ -80,7 +88,7 @@ class SignLayout extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context, double height, double width,
-      PhoneModel hydratedInfo) {
+      PhoneModel? hydratedInfo) {
     return SizedBox(
       height: height * 0.5,
       child: BlocConsumer<LocationBloc, LocationState>(
@@ -137,11 +145,10 @@ class SignLayout extends StatelessWidget {
     );
   }
 
-  Widget _buildManualSignButton(BuildContext context) {
+  Widget _buildManualSignButton(BuildContext context, PhoneModel hydratedInfo) {
     return FloatingActionButton.extended(
       heroTag: null,
-      onPressed: () =>
-          showDateTimeDialog(context, context.read<AuthHyBloc>().state.user!),
+      onPressed: () => showDateTimeDialog(context, hydratedInfo),
       backgroundColor: kPrimaryColor,
       foregroundColor: Colors.white,
       shape: RoundedRectangleBorder(

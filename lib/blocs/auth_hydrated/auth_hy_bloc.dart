@@ -1,5 +1,6 @@
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter/foundation.dart';
 import 'package:signclock/model/phone_model.dart';
 
 part 'auth_hy_event.dart';
@@ -7,30 +8,49 @@ part 'auth_hy_state.dart';
 part 'auth_hy_bloc.freezed.dart';
 
 class AuthHyBloc extends HydratedBloc<AuthHyEvent, AuthHyState> {
+  static const String _persistenceKey = 'auth_hydrated_bloc';
+
   AuthHyBloc() : super(AuthHyState.initial()) {
     on<Authenticated>(_onAuthenticated);
     on<UserUpdated>(_onUserUpdated);
     on<Unauthenticated>(_onUnauthenticated);
+
+    if (_isStateInconsistent(state)) {
+      add(const Unauthenticated());
+    }
+  }
+
+  bool _isStateInconsistent(AuthHyState state) {
+    return (state.isAuthenticated &&
+            (state.user == null || state.token == null)) ||
+        (!state.isAuthenticated && (state.user != null || state.token != null));
   }
 
   void _onUnauthenticated(Unauthenticated event, Emitter<AuthHyState> emit) {
-    emit(state.copyWith(
-      isAuthenticated: false,
-      user: null,
-      token: null,
-    ));
+    final newState = AuthHyState.initial();
+    emit(newState);
+    _persistState(newState);
   }
 
   void _onAuthenticated(Authenticated event, Emitter<AuthHyState> emit) {
-    emit(state.copyWith(
-      isAuthenticated: event.isAuthenticated,
+    if (event.user == null || event.token == null || event.token!.isEmpty) {
+      return;
+    }
+
+    emit(AuthHyState.initial());
+    final newState = AuthHyState(
+      isAuthenticated: true,
       user: event.user,
       token: event.token,
-    ));
+    );
+    emit(newState);
+    _persistState(newState);
   }
 
   void _onUserUpdated(UserUpdated event, Emitter<AuthHyState> emit) {
-    emit(state.copyWith(
+    if (state.user == null) return;
+
+    final newState = state.copyWith(
       user: state.user?.copyWith(
         groupPhoneId: event.groupId,
         groupId: event.groupId,
@@ -52,30 +72,77 @@ class AuthHyBloc extends HydratedBloc<AuthHyEvent, AuthHyState> {
         lastSign: event.lastSign,
       ),
       token: event.token ?? state.token,
-    ));
+    );
+
+    emit(newState);
+    _persistState(newState);
+  }
+
+  void _persistState(AuthHyState stateToSave) {
+    try {
+      HydratedBloc.storage.delete(_persistenceKey);
+      Future.delayed(const Duration(milliseconds: 100), () {
+        try {
+          HydratedBloc.storage.write(_persistenceKey, toJson(stateToSave));
+        } catch (e) {
+          if (kDebugMode) {
+            print('Error al persistir estado: $e');
+          }
+        }
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error al eliminar estado anterior: $e');
+      }
+    }
   }
 
   @override
   AuthHyState? fromJson(Map<String, dynamic> json) {
     try {
+      final user = json['user'] != null
+          ? PhoneModel.fromJson(json['user'] as Map<String, dynamic>)
+          : null;
+      final token = json['token'] as String?;
+      final isAuthenticated = json['isAuthenticated'] as bool? ?? false;
+      if ((isAuthenticated && (user == null || token == null)) ||
+          (!isAuthenticated && (user != null || token != null))) {
+        try {
+          HydratedBloc.storage.delete(_persistenceKey);
+        } catch (_) {}
+        return AuthHyState.initial();
+      }
+
       return AuthHyState(
-        isAuthenticated: json['isAuthenticated'] as bool,
-        user: json['user'] != null
-            ? PhoneModel.fromJson(json['user'] as Map<String, dynamic>)
-            : null,
-        token: json['token'] as String?,
+        isAuthenticated: isAuthenticated,
+        user: user,
+        token: token,
       );
     } catch (e) {
-      return null;
+      try {
+        HydratedBloc.storage.delete(_persistenceKey);
+      } catch (_) {}
+      return AuthHyState.initial();
     }
   }
 
   @override
   Map<String, dynamic>? toJson(AuthHyState state) {
+    if (_isStateInconsistent(state)) {
+      return {
+        'isAuthenticated': false,
+        'user': null,
+        'token': null,
+      };
+    }
+
     return {
       'isAuthenticated': state.isAuthenticated,
       'user': state.user?.toJson(),
       'token': state.token,
     };
   }
+
+  @override
+  String get id => _persistenceKey;
 }

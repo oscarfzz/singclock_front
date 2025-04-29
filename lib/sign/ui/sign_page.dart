@@ -16,6 +16,12 @@ class SignPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final authBloc = context.read<AuthHyBloc>();
 
+    if (authBloc.state.user == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     return BlocProvider<LocationBloc>(
       create: (_) {
         final locationBloc = LocationBloc(

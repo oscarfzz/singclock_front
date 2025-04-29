@@ -1,36 +1,56 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
-import 'package:signclock/root_screen.dart';
-import 'package:signclock/constant/theme.dart';
-
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
+
+import 'blocs/auth_hydrated/auth_hy_bloc.dart';
+import 'constant/theme.dart';
 import 'otp_login/ui/login_layout.dart';
+import 'root_screen.dart';
+
+// Variable global para acceder al storage de HydratedBloc
+late HydratedStorage hydratedStorage;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  Bloc.observer = MyBlocObserver();
-  HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory: kIsWeb
-        ? HydratedStorage.webStorageDirectory
-        : await getTemporaryDirectory(),
-  );
+  await _initializeHydratedStorage();
 
-  final authBloc = AuthHyBloc();
-  runApp(AppView(authBloc: authBloc));
+  try {
+    runApp(AppRoot(authBloc: AuthHyBloc()));
+  } catch (e) {
+    runApp(const AppRoot());
+  }
 }
 
-class AppView extends StatelessWidget {
-  final AuthHyBloc authBloc;
-  const AppView({super.key, required this.authBloc});
+Future<void> _initializeHydratedStorage() async {
+  final storageDirectory = kIsWeb
+      ? HydratedStorage.webStorageDirectory
+      : await getTemporaryDirectory();
+
+  for (int attempt = 1; attempt <= 3; attempt++) {
+    try {
+      hydratedStorage = await HydratedStorage.build(
+        storageDirectory: storageDirectory,
+      );
+      HydratedBloc.storage = hydratedStorage;
+      return;
+    } catch (e) {
+      if (attempt == 3) rethrow;
+      await Future.delayed(const Duration(milliseconds: 300));
+    }
+  }
+}
+
+class AppRoot extends StatelessWidget {
+  final AuthHyBloc? authBloc;
+  const AppRoot({this.authBloc, super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AuthHyBloc>.value(
-      value: authBloc,
+    return BlocProvider<AuthHyBloc>(
+      create: (context) => authBloc ?? AuthHyBloc(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
@@ -39,33 +59,61 @@ class AppView extends StatelessWidget {
           primarySwatch: Palette.kToDark,
         ),
         routes: {
+          '/': (context) => const AuthNavigator(),
           RootScreen.route: (context) => const RootScreen(),
           LoginLayout.route: (context) => const LoginLayout(),
         },
-        home: const AuthNavigator(),
       ),
     );
   }
 }
 
-class AuthNavigator extends StatelessWidget {
+class AuthNavigator extends StatefulWidget {
   const AuthNavigator({super.key});
+
+  @override
+  State<AuthNavigator> createState() => _AuthNavigatorState();
+}
+
+class _AuthNavigatorState extends State<AuthNavigator> {
+  @override
+  void initState() {
+    super.initState();
+    _navigateBasedOnAuthState();
+  }
+
+  void _navigateBasedOnAuthState() {
+    final state = context.read<AuthHyBloc>().state;
+
+    Future.microtask(() {
+      if (!mounted) return;
+
+      final route = (state.isAuthenticated && state.user != null)
+          ? RootScreen.route
+          : LoginLayout.route;
+
+      Navigator.of(context).pushNamedAndRemoveUntil(route, (r) => false);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthHyBloc, AuthHyState>(
       listenWhen: (previous, current) =>
-          previous.isAuthenticated != current.isAuthenticated,
+          previous.isAuthenticated != current.isAuthenticated ||
+          (previous.user == null) != (current.user == null),
       listener: (context, state) {
-        if (state.isAuthenticated) {
-          Navigator.of(context).pushReplacementNamed(RootScreen.route);
-        } else {
-          Navigator.of(context).pushReplacementNamed(LoginLayout.route);
-        }
+        if (!mounted) return;
+
+        final route = (state.isAuthenticated && state.user != null)
+            ? RootScreen.route
+            : LoginLayout.route;
+
+        Navigator.of(context).pushNamedAndRemoveUntil(route, (_) => false);
       },
-      child: context.select((AuthHyBloc bloc) => bloc.state.isAuthenticated)
-          ? const RootScreen()
-          : const LoginLayout(),
+      child: const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      ),
     );
   }
 }

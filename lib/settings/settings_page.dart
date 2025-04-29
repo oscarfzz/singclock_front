@@ -13,6 +13,7 @@ import 'package:signclock/settings/widgets/selector_group_widget.dart';
 import 'package:signclock/settings/widgets/top_screen_stt.dart';
 
 import './widgets/enum_day.dart';
+import 'package:signclock/services/logout_service.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -52,12 +53,14 @@ class _SettingsPageState extends State<SettingsPage> {
     if (kDebugMode) {
       print("User: $_user");
     }
-    //if (_user != null) {
-    if (_authHyBloc.state.user != null) {
-      _loadData();
-    } else {
-      _showSnackBar("Usuario no disponible");
-    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_authHyBloc.state.user != null) {
+        _loadData();
+      } else {
+        _showSnackBar("Usuario no disponible");
+      }
+    });
   }
 
   @override
@@ -83,21 +86,13 @@ class _SettingsPageState extends State<SettingsPage> {
         _showSnackBar('Error al cargar datos e-1');
         return;
       }
-      // setState(() {
-      //   _groupList = groupList.data!;
-      //   if (_groupList.isNotEmpty && _groupList.first.id != null) {
-      //     _setGroupData(_user.groupId);
-      //   }
-      // });
+
       setState(() {
         _groupList = groupList.data ?? [];
         if (_groupList.isNotEmpty && _groupList.first.id != 1) {
           _setGroupData(_user!.groupId);
         }
       });
-    } catch (e) {
-      // _showSnackBar('Error al cargar datos e-2 $e');
-      _showSnackBar('Datos cargados');
     } finally {
       setState(() => _isLoadingGroups = false);
     }
@@ -324,6 +319,25 @@ class StaticInfoWidget extends StatelessWidget {
             Text("- Grupo: ${user?.groupId ?? 'N/A'}"),
           ] else
             const Text("- Usuario no disponible"),
+          const SizedBox(height: 20.0),
+          Center(
+            child: ElevatedButton.icon(
+              onPressed: () {
+                LogoutService.showLogoutConfirmationDialog(context);
+              },
+              icon: const Icon(Icons.logout, color: Colors.white),
+              label: const Text('Cerrar sesión',
+                  style: TextStyle(color: Colors.white)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0, vertical: 10.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

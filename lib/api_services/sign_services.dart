@@ -27,12 +27,10 @@ class SignServices extends ApiService {
     var retData = await signServices.postSign(data);
 
     if (retData.status == "success") {
-      final updatedUser =
-          authBloc.state.user!.copyWith(lastSign: retData.data!.type);
-      authBloc.add(Authenticated(
-          isAuthenticated: true,
-          user: updatedUser,
-          token: authBloc.state.token));
+      authBloc.add(UserUpdated(
+        lastSign: retData.data!.type,
+      ));
+
       return retData.data!.type;
     } else {
       throw NetworkError(retData.msg);
