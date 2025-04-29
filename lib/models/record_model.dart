@@ -4,8 +4,6 @@
 
 import 'dart:convert';
 
-import 'package:intl/intl.dart';
-
 List<RecordModel> recordModelListFromJson(String str) => List<RecordModel>.from(
     json.decode(str).map((x) => RecordModel.fromJson(x)));
 
@@ -16,7 +14,6 @@ RecordModel recordModelFromJson(String str) =>
     RecordModel.fromJson(json.decode(str));
 
 String recordModelToJson(RecordModel data) => json.encode(data.toJson());
-
 
 class RecordModel {
   RecordModel({

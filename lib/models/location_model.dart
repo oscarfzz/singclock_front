@@ -1,11 +1,11 @@
 class LocationModel {
-  final String id_reg;
+  final String idReg;
   final String lat;
   final String lon;
   final String timestamp;
 
   LocationModel({
-    required this.id_reg,
+    required this.idReg,
     required this.lat,
     required this.lon,
     required this.timestamp,
@@ -13,7 +13,7 @@ class LocationModel {
 
   factory LocationModel.fromJson(Map<String, dynamic> jsonData) {
     return LocationModel(
-      id_reg: jsonData['id_reg'],
+      idReg: jsonData['id_reg'],
       lat: jsonData['lat'],
       lon: jsonData['lon'],
       timestamp: jsonData['timestamp'],
@@ -21,7 +21,7 @@ class LocationModel {
   }
 
   Map<String, dynamic> toJson() => {
-        'id_reg': id_reg,
+        'id_reg': idReg,
         'lat': lat,
         'lon': lon,
         'timestamp': timestamp,

@@ -24,7 +24,7 @@ class OtpUi extends StatefulWidget {
   });
 
   @override
-  _OtpUiState createState() => _OtpUiState();
+  State<OtpUi> createState() => _OtpUiState();
 }
 
 class _OtpUiState extends State<OtpUi> {

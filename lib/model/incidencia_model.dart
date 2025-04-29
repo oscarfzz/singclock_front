@@ -83,8 +83,7 @@ class MessageEntity {
     data['para'] = para;
     data['texto'] = texto;
     data['leido'] = leido;
-    data['datetime'] =
-        datetime == null ? null : datetime!.toIso8601String();
+    data['datetime'] = datetime?.toIso8601String();
     return data;
   }
 }
@@ -118,8 +117,7 @@ class DataIn {
     data['id_numero'] = idNumero;
     data['texto'] = texto;
     data['leido'] = leido;
-    data['datetime'] =
-        datetime == null ? null : datetime?.toIso8601String();
+    data['datetime'] = datetime?.toIso8601String();
     return data;
   }
 }

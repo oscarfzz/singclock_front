@@ -2,7 +2,6 @@
 //
 //     final incidenciasModel = incidenciasModelFromJson(jsonString);
 
-import 'package:meta/meta.dart';
 import 'dart:convert';
 
 IncidenciasModel incidenciasModelFromJson(String str) =>
@@ -23,25 +22,25 @@ class IncidenciasModel {
     if (json['datalist'] != null) {
       datalist = <Datalist>[];
       json['datalist'].forEach((v) {
-        datalist!.add(new Datalist.fromJson(v));
+        datalist!.add(Datalist.fromJson(v));
       });
     }
     if (json['data_in'] != null) {
       dataIn = <DataIn>[];
       json['data_in'].forEach((v) {
-        dataIn!.add(new DataIn.fromJson(v));
+        dataIn!.add(DataIn.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
-    if (this.datalist != null) {
-      data['datalist'] = this.datalist!.map((v) => v.toJson()).toList();
+    final data = <String, dynamic>{};
+    data['success'] = success;
+    if (datalist != null) {
+      data['datalist'] = datalist!.map((v) => v.toJson()).toList();
     }
-    if (this.dataIn != null) {
-      data['data_in'] = this.dataIn!.map((v) => v.toJson()).toList();
+    if (dataIn != null) {
+      data['data_in'] = dataIn!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -73,19 +72,18 @@ class Datalist {
     texto = json['texto'];
     leido = json['leido'];
     datetime =
-        json["datetime"] == null ? null : DateTime.parse(json["datetime"]);
+        json["datetime"] != null ? DateTime.parse(json["datetime"]) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id_incidencia'] = this.idIncidencia;
-    data['id_numero'] = this.idNumero;
-    data['nombre'] = this.nombre;
-    data['para'] = this.para;
-    data['texto'] = this.texto;
-    data['leido'] = this.leido;
-    data['datetime'] =
-        this.datetime == null ? null : datetime!.toIso8601String();
+    final data = <String, dynamic>{};
+    data['id_incidencia'] = idIncidencia;
+    data['id_numero'] = idNumero;
+    data['nombre'] = nombre;
+    data['para'] = para;
+    data['texto'] = texto;
+    data['leido'] = leido;
+    data['datetime'] = datetime?.toIso8601String();
     return data;
   }
 }
@@ -110,17 +108,16 @@ class DataIn {
     texto = json['texto'];
     leido = json['leido'];
     datetime =
-        json["datetime"] == null ? null : DateTime.parse(json["datetime"]);
+        json["datetime"] != null ? DateTime.parse(json["datetime"]) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id_incidencia'] = this.idIncidencia;
-    data['id_numero'] = this.idNumero;
-    data['texto'] = this.texto;
-    data['leido'] = this.leido;
-    data['datetime'] =
-        this.datetime == null ? null : datetime?.toIso8601String();
+    final data = <String, dynamic>{};
+    data['id_incidencia'] = idIncidencia;
+    data['id_numero'] = idNumero;
+    data['texto'] = texto;
+    data['leido'] = leido;
+    data['datetime'] = datetime?.toIso8601String();
     return data;
   }
 }

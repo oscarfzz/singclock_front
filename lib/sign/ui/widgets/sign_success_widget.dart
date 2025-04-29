@@ -16,8 +16,6 @@ class SignSuccessWidget extends StatefulWidget {
 class _SignSuccessWidgetState extends State<SignSuccessWidget> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: const Center(child: Text("success")),
-    );
+    return const Center(child: Text("success"));
   }
 }

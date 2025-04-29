@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
@@ -77,7 +78,9 @@ class AddChatState extends State<AddChat> {
     try {
       response = await chatService.createChat(phoneId, chatName);
     } catch (ex) {
-      print(ex.toString());
+      if (kDebugMode) {
+        print(ex.toString());
+      }
       _showErrorMessage(
           'Error inesperado, disculpe las molestias (cc). ${ex.toString()}');
       throw Exception();
@@ -104,7 +107,9 @@ class AddChatState extends State<AddChat> {
       //     .addUserToChat(chatId, addPhoneNumber, user, token);
     } catch (ex) {
       _showErrorMessage('Error inesperado, disculpe las molestias. (autg)');
-      print(ex.toString());
+      if (kDebugMode) {
+        print(ex.toString());
+      }
       throw Exception();
     }
 
@@ -124,7 +129,9 @@ class AddChatState extends State<AddChat> {
     try {
       contact = await FlutterContacts.openExternalPick();
     } catch (ex) {
-      print('No se han obtenido permisos para leer contactos');
+      if (kDebugMode) {
+        print('No se han obtenido permisos para leer contactos');
+      }
     }
 
     setState(() {

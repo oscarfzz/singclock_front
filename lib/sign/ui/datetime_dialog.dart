@@ -10,14 +10,14 @@ import 'package:signclock/model/sign_model.dart';
 import 'package:signclock/sign/location_repo/location_repository.dart';
 
 void showDateTimeDialog(BuildContext context, PhoneModel phoneModel) {
-  final TextEditingController _dateController = TextEditingController();
-  final TextEditingController _timeController = TextEditingController();
+  final dateController = TextEditingController();
+  final timeController = TextEditingController();
 
   final locationRepository = LocationRepository();
 
-  _dateController.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
+  dateController.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
   // set time to 14:00
-  _timeController.text = '14:00';
+  timeController.text = '14:00';
   //  // V2
   showDialog(
       context: context,
@@ -28,11 +28,11 @@ void showDateTimeDialog(BuildContext context, PhoneModel phoneModel) {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               TextField(
-                controller: _dateController,
+                controller: dateController,
                 decoration: const InputDecoration(labelText: 'Día'),
               ),
               TextField(
-                controller: _timeController,
+                controller: timeController,
                 decoration:
                     const InputDecoration(labelText: 'Hora', hintText: 'HH:MM'),
               )
@@ -46,8 +46,10 @@ void showDateTimeDialog(BuildContext context, PhoneModel phoneModel) {
             TextButton(
               onPressed: () async {
                 try {
+                  final authBloc = BlocProvider.of<AuthHyBloc>(context);
+
                   final dateTime = DateFormat('dd-MM-yyyy HH:mm:ss').parse(
-                      '${_dateController.text} ${_timeController.text}:00');
+                      '${dateController.text} ${timeController.text}:00');
                   final formattedDateTime =
                       DateFormat('dd-MM-yyyy - HH:mm:ss').format(dateTime);
                   final currentUserLocation =
@@ -66,13 +68,11 @@ void showDateTimeDialog(BuildContext context, PhoneModel phoneModel) {
                     'type': "DP", // DP = Declaración de Presencia
                   });
 
-                  final authBloc = BlocProvider.of<AuthHyBloc>(context);
                   final signServices = SignServices(authBloc);
 
-                  final response = await signServices.postSign(
-                    dataPost,
-                  );
+                  await signServices.postSign(dataPost);
 
+                  if (!context.mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content:
@@ -85,12 +85,16 @@ void showDateTimeDialog(BuildContext context, PhoneModel phoneModel) {
                   if (e is TimeoutException) {
                     errorMessage = e.message!;
                   }
+
+                  if (!context.mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(errorMessage),
                     ),
                   );
                 }
+
+                if (!context.mounted) return;
                 Navigator.pop(context);
               },
               child: const Text('OK'),

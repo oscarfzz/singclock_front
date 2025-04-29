@@ -78,9 +78,4 @@ class AuthHyBloc extends HydratedBloc<AuthHyEvent, AuthHyState> {
       'token': state.token,
     };
   }
-
-  @override
-  Future<void> close() {
-    return super.close();
-  }
 }

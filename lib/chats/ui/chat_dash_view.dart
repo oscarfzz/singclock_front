@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -129,7 +130,9 @@ class _ChatDashViewState extends State<ChatDashView> {
               currentUser: _actualUser,
               messageListOptions: MessageListOptions(
                   onLoadEarlier: () async {
-                    print('Solicitar mensajes más  viejos');
+                    if (kDebugMode) {
+                      print('Solicitar mensajes más  viejos');
+                    }
                   },
                   showDateSeparator: true,
                   dateSeparatorBuilder: (date) {

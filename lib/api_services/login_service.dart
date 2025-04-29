@@ -9,16 +9,20 @@ class LoginService extends ApiService {
   Future<ApiResponseModel<Map<String, dynamic>>> authenticatePhone(
       String phoneNumber) async {
     return await apiRequest<Map<String, dynamic>>(
-      endpoint: ApiConstants.login, 
+      endpoint: ApiConstants.login,
       data: {"phone_number": phoneNumber},
       tokenHeader: false,
-      fromJson: (dynamic json) { 
+      fromJson: (dynamic json) {
         if (json is Map) {
-          return Map<String, dynamic>.from(json.map((key, value) => MapEntry(key.toString(), value)));
+          return Map<String, dynamic>.from(
+              json.map((key, value) => MapEntry(key.toString(), value)));
         } else if (json == null) {
           return <String, dynamic>{};
         } else {
-          print("ERROR: Expected Map or null for authenticatePhone 'data' field, got ${json.runtimeType}: $json");
+          if (kDebugMode) {
+            print(
+                "ERROR: Expected Map or null for authenticatePhone 'data' field, got ${json.runtimeType}: $json");
+          }
           return <String, dynamic>{};
         }
       },
@@ -30,14 +34,18 @@ class LoginService extends ApiService {
     return await apiRequest<Map<String, dynamic>>(
       endpoint: ApiConstants.otp,
       data: {"phone_number": phoneNumber, "phone_code": otpCode},
-      tokenHeader: false, 
+      tokenHeader: false,
       fromJson: (dynamic json) {
         if (json is Map) {
-          return Map<String, dynamic>.from(json.map((key, value) => MapEntry(key.toString(), value)));
+          return Map<String, dynamic>.from(
+              json.map((key, value) => MapEntry(key.toString(), value)));
         } else if (json == null) {
-           return <String, dynamic>{}; 
+          return <String, dynamic>{};
         }
-        print("ERROR: Expected Map for otp 'data' field, got ${json.runtimeType}: $json");
+        if (kDebugMode) {
+          print(
+              "ERROR: Expected Map for otp 'data' field, got ${json.runtimeType}: $json");
+        }
         throw FormatException("Respuesta JSON inesperada para OTP: $json");
       },
     );

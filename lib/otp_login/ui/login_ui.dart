@@ -17,7 +17,7 @@ class LoginUi extends StatefulWidget {
   const LoginUi({super.key, required this.parentState});
 
   @override
-  _LoginUiState createState() => _LoginUiState();
+  State<LoginUi> createState() => _LoginUiState();
 }
 
 class _LoginUiState extends State<LoginUi> {
@@ -59,7 +59,7 @@ class _LoginUiState extends State<LoginUi> {
     if (response.status == 'success') {
       _responseOk(parsableNumber);
     } else {
-      _responseKo(response.msg ?? "Error al enviar OTP.");
+      _responseKo(response.msg);
     }
   }
 

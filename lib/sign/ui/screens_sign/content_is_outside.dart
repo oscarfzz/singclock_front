@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:signclock/constant/theme.dart';
 import 'package:signclock/model/phone_model.dart';
 import 'package:signclock/sign/bloc_location/location_bloc.dart';
 import 'package:signclock/sign/ui/widgets/sign_button.dart';

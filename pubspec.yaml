@@ -36,7 +36,9 @@ dependencies:
 
   hydrated_bloc: ^9.0.0
   flutter_bloc: ^8.1.2
+  bloc: ^8.1.4
   equatable: ^2.0.7
+  meta: ^1.16.0
   # flow_builder: ^0.0.9
 
   location: ^7.0.1

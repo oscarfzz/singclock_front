@@ -6,7 +6,7 @@ part of 'api_response_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ApiResponseModel<T> _$ApiResponseModelFromJson<T>(
+ApiResponseModel<T> $ApiResponseModelFromJson<T>(
   Map<String, dynamic> json,
   T Function(Object? json) fromJsonT,
 ) =>

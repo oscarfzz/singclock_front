@@ -6,7 +6,7 @@ import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart';
 
 import 'package:equatable/equatable.dart';
-import 'package:signclock/sign/services/current_location_isValid.dart';
+import 'package:signclock/sign/services/current_location_is_valid.dart';
 import 'package:signclock/api_services/sign_services.dart';
 import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
 import 'package:signclock/model/sign_model.dart';
@@ -225,10 +225,10 @@ class LocationBloc extends HydratedBloc<LocationEvent, LocationState> {
   }
 
   String _getSignTypeFromEvent(LocationEvent event) {
-    return switch (event.runtimeType) {
-      InitWorkingEvent => 'E',
-      InitRestingEvent => 'DS',
-      ReturnWorkingEvent => 'DE',
+    return switch (event) {
+      InitWorkingEvent _ => 'E',
+      InitRestingEvent _ => 'DS',
+      ReturnWorkingEvent _ => 'DE',
       _ => 'S',
     };
   }

@@ -39,10 +39,10 @@ class AppView extends StatelessWidget {
           primarySwatch: Palette.kToDark,
         ),
         routes: {
-          RootScreen.ROUTE: (context) => const RootScreen(),
-          LoginLayout.ROUTE: (context) => const LoginLayout(),
+          RootScreen.route: (context) => const RootScreen(),
+          LoginLayout.route: (context) => const LoginLayout(),
         },
-        home: const AuthNavigator(), 
+        home: const AuthNavigator(),
       ),
     );
   }
@@ -54,17 +54,18 @@ class AuthNavigator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthHyBloc, AuthHyState>(
-      listenWhen: (previous, current) => previous.isAuthenticated != current.isAuthenticated,
+      listenWhen: (previous, current) =>
+          previous.isAuthenticated != current.isAuthenticated,
       listener: (context, state) {
         if (state.isAuthenticated) {
-          Navigator.of(context).pushReplacementNamed(RootScreen.ROUTE);
+          Navigator.of(context).pushReplacementNamed(RootScreen.route);
         } else {
-          Navigator.of(context).pushReplacementNamed(LoginLayout.ROUTE);
+          Navigator.of(context).pushReplacementNamed(LoginLayout.route);
         }
       },
       child: context.select((AuthHyBloc bloc) => bloc.state.isAuthenticated)
-             ? const RootScreen() 
-             : const LoginLayout(),
+          ? const RootScreen()
+          : const LoginLayout(),
     );
   }
 }
@@ -72,7 +73,9 @@ class AuthNavigator extends StatelessWidget {
 class MyBlocObserver extends BlocObserver {
   @override
   void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
-    print('onError -- ${bloc.runtimeType}, $error\n\n');
+    if (kDebugMode) {
+      print('onError -- ${bloc.runtimeType}, $error\n\n');
+    }
     super.onError(bloc, error, stackTrace);
   }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
@@ -32,9 +33,15 @@ class InputRoundTelephone extends StatelessWidget {
       child: InternationalPhoneNumberInput(
         onInputChanged: onChanged,
         onSaved: onSaved,
-        onFieldSubmitted: (value) => print(value),
+        onFieldSubmitted: (value) {
+          if (kDebugMode) {
+            print(value);
+          }
+        },
         onInputValidated: (bool value) {
-          print(value);
+          if (kDebugMode) {
+            print(value);
+          }
         },
         focusNode: focusNode,
         textAlignVertical: TextAlignVertical.bottom,

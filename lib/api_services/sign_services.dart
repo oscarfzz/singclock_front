@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
 import 'package:signclock/model/phone_model.dart';
 import 'package:signclock/sign/services/app_error.dart';
@@ -46,12 +47,14 @@ class SignServices extends ApiService {
       fromJson: (dynamic json) {
         if (json is Map) {
           return Map<String, dynamic>.from(
-              json.map((key, value) => MapEntry(key.toString(), value))
-          );
+              json.map((key, value) => MapEntry(key.toString(), value)));
         } else if (json == null) {
           return null;
         }
-        print("WARN: Expected Map or null in fromJson for getActualStatus, got ${json.runtimeType}");
+        if (kDebugMode) {
+          print(
+              "WARN: Expected Map or null in fromJson for getActualStatus, got ${json.runtimeType}");
+        }
         return null;
       },
     );

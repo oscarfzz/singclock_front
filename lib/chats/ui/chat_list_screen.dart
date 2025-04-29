@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -54,7 +55,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
         _showErrorMessage("Usuario o token inválido.");
       }
     } catch (error) {
-      print(error);
+      if (kDebugMode) {
+        print(error);
+      }
       _showErrorMessage('Error inesperado, disculpe las molestias.$error');
     }
   }

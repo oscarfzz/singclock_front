@@ -24,8 +24,9 @@ class ApiService {
     _dio = Dio(options);
 
     if (kDebugMode) {
-      (_dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate =
-          (client) {
+      final adapter = _dio.httpClientAdapter as IOHttpClientAdapter;
+      adapter.createHttpClient = () {
+        final client = HttpClient();
         client.badCertificateCallback =
             (X509Certificate cert, String host, int port) => true;
         return client;
@@ -68,46 +69,46 @@ class ApiService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseBody = response.data as Map<dynamic, dynamic>? ?? {};
         final String? tokenFromHeader = response.headers.value('x-token');
-        
+
         final dynamic dataFieldContent = responseBody['data'];
-        
+
         T parsedData;
         try {
-            parsedData = fromJson(dataFieldContent);
+          parsedData = fromJson(dataFieldContent);
         } catch (e, stackTrace) {
-            if (kDebugMode) {
-              print("===== fromJson Parsing Exception =====");
-              print("Endpoint: $endpoint");
-              print("Data field content type: ${dataFieldContent?.runtimeType}");
-              print("Data field content: $dataFieldContent");
-              print("Error: ${e.toString()}");
-              print("StackTrace: $stackTrace");
-              print("====================================");
-            }
-            return ApiResponseModel<T>(
-                status: 'error',
-                msg: 'Error al procesar datos de respuesta: ${e.toString()}',
-                data: null, 
-                token: tokenFromHeader 
-            ); 
+          if (kDebugMode) {
+            print("===== fromJson Parsing Exception =====");
+            print("Endpoint: $endpoint");
+            print("Data field content type: ${dataFieldContent?.runtimeType}");
+            print("Data field content: $dataFieldContent");
+            print("Error: ${e.toString()}");
+            print("StackTrace: $stackTrace");
+            print("====================================");
+          }
+          return ApiResponseModel<T>(
+              status: 'error',
+              msg: 'Error al procesar datos de respuesta: ${e.toString()}',
+              data: null,
+              token: tokenFromHeader);
         }
 
         return ApiResponseModel<T>(
             status: responseBody['status'] as String? ?? 'success',
             msg: responseBody['msg'] as String? ?? '',
-            data: parsedData, 
-            token: tokenFromHeader 
-        );
+            data: parsedData,
+            token: tokenFromHeader);
       } else if (response.statusCode == 401) {
         if (kDebugMode) {
-          print("Received 401 Unauthorized. Scheduling Unauthentication event.");
+          print(
+              "Received 401 Unauthorized. Scheduling Unauthentication event.");
         }
         Future.microtask(() {
           if (!authBloc.isClosed) {
             authBloc.add(const Unauthenticated());
           } else {
             if (kDebugMode) {
-              print("AuthHyBloc was closed before Unauthenticated could be added.");
+              print(
+                  "AuthHyBloc was closed before Unauthenticated could be added.");
             }
           }
         });
@@ -157,7 +158,9 @@ class ApiService {
         print("============================");
       }
       return ApiResponseModel<T>(
-          status: 'error', msg: 'Error inesperado: ${e.toString()}', data: null);
+          status: 'error',
+          msg: 'Error inesperado: ${e.toString()}',
+          data: null);
     }
   }
 

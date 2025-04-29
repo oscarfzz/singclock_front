@@ -26,14 +26,15 @@ class BlankContent extends StatelessWidget {
                 Icon(
                   icon ?? Icons.receipt,
                   size: 80.0,
-                  color: Theme.of(context).hintColor.withOpacity(0.4),
+                  color: Theme.of(context).hintColor.withValues(alpha: 102),
                 ),
                 Text(
                   content ?? "Aqui nada",
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).highlightColor.withOpacity(0.4),
+                    color:
+                        Theme.of(context).highlightColor.withValues(alpha: 102),
                   ),
                 ),
               ],

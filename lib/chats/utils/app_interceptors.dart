@@ -50,7 +50,7 @@ void onResponse(Response response, ResponseInterceptorHandler handler) {
   return handler.resolve(responseData);
 }
 
-void onError(DioError err, ErrorInterceptorHandler handler) {
+void onError(DioException err, ErrorInterceptorHandler handler) {
   // obtiene mensaje de error personalizado
   final errorMessage = getErrorMessage(err.type, err.response?.statusCode);
 
@@ -64,15 +64,15 @@ void onError(DioError err, ErrorInterceptorHandler handler) {
   return handler.resolve(responseData);
 }
 
-String getErrorMessage(DioErrorType errorType, int? statusCode) {
+String getErrorMessage(DioExceptionType errorType, int? statusCode) {
   String errorMessage = "";
   switch (errorType) {
-    case DioErrorType.connectionTimeout:
-    case DioErrorType.sendTimeout:
-    case DioErrorType.receiveTimeout:
+    case DioExceptionType.connectionTimeout:
+    case DioExceptionType.sendTimeout:
+    case DioExceptionType.receiveTimeout:
       errorMessage = DioErrorMessage.deadlineExceededException;
       break;
-    case DioErrorType.badResponse:
+    case DioExceptionType.badResponse:
       switch (statusCode) {
         case 400:
           errorMessage = DioErrorMessage.badRequestException;
@@ -91,15 +91,15 @@ String getErrorMessage(DioErrorType errorType, int? statusCode) {
           break;
       }
       break;
-    case DioErrorType.cancel:
+    case DioExceptionType.cancel:
       break;
-    case DioErrorType.unknown:
+    case DioExceptionType.unknown:
       errorMessage = DioErrorMessage.unexpectedException;
       break;
-    case DioErrorType.badCertificate:
+    case DioExceptionType.badCertificate:
       errorMessage = DioErrorMessage.badCertificate;
       break;
-    case DioErrorType.connectionError:
+    case DioExceptionType.connectionError:
       errorMessage = DioErrorMessage.connectionError;
       break;
   }

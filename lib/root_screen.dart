@@ -12,7 +12,7 @@ import 'blocs/auth_hydrated/auth_hy_bloc.dart';
 import 'chats/ui/chat_list_screen.dart';
 
 class RootScreen extends StatefulWidget {
-  static const String ROUTE = 'root_screen';
+  static const String route = 'root_screen';
 
   const RootScreen({
     super.key,
