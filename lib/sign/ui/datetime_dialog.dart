@@ -5,8 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:signclock/api_services/sign_services.dart';
 import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
-import 'package:signclock/model/phone_model.dart';
-import 'package:signclock/model/sign_model.dart';
+import 'package:signclock/models/phone_model.dart';
+import 'package:signclock/models/sign_model.dart';
 import 'package:signclock/sign/location_repo/location_repository.dart';
 
 void showDateTimeDialog(BuildContext context, PhoneModel phoneModel) {

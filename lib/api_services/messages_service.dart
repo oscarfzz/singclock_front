@@ -1,6 +1,6 @@
 import 'package:signclock/api_services/api_service.dart';
 
-import 'package:signclock/model/api_response_model.dart';
+import 'package:signclock/models/api_response_model.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:signclock/chats/model/request/create_chat_message_request.dart';
 

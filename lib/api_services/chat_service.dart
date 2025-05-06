@@ -2,8 +2,8 @@ import 'api_service.dart';
 
 import 'package:signclock/chats/model/chat_model.dart';
 
-import 'package:signclock/model/api_response_model.dart';
-import 'package:signclock/model/phone_model.dart';
+import 'package:signclock/models/api_response_model.dart';
+import 'package:signclock/models/phone_model.dart';
 
 import 'package:signclock/constant/api_constants.dart';
 
@@ -25,9 +25,8 @@ class ChatService extends ApiService {
     return await apiRequest<List<ChatModel>>(
       endpoint: ApiConstants.chat,
       data: {'crud': 'R', 'phone_id': user.phoneId},
-      fromJson: (json) => (json is List)
-          ? json.map((x) => ChatModel.fromJson(x)).toList()
-          : [],
+      fromJson: (json) =>
+          (json is List) ? json.map((x) => ChatModel.fromJson(x)).toList() : [],
     );
   }
 

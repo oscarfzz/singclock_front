@@ -12,7 +12,7 @@ String incidenciasModelToJson(IncidenciasModel data) =>
 
 class IncidenciasModel {
   String? success;
-  List<Datalist>? datalist;
+  List<MessageEntity>? datalist;
   List<DataIn>? dataIn;
 
   IncidenciasModel({this.success, this.datalist, this.dataIn});
@@ -20,9 +20,9 @@ class IncidenciasModel {
   IncidenciasModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     if (json['datalist'] != null) {
-      datalist = <Datalist>[];
+      datalist = <MessageEntity>[];
       json['datalist'].forEach((v) {
-        datalist!.add(Datalist.fromJson(v));
+        datalist!.add(MessageEntity.fromJson(v));
       });
     }
     if (json['data_in'] != null) {
@@ -34,7 +34,7 @@ class IncidenciasModel {
   }
 
   Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['success'] = success;
     if (datalist != null) {
       data['datalist'] = datalist!.map((v) => v.toJson()).toList();
@@ -46,16 +46,16 @@ class IncidenciasModel {
   }
 }
 
-class Datalist {
-  String? idIncidencia;
-  String? idNumero;
+class MessageEntity {
+  int? idIncidencia;
+  int? idNumero;
   String? nombre;
   String? para;
   String? texto;
   String? leido;
   DateTime? datetime;
 
-  Datalist(
+  MessageEntity(
       {this.idIncidencia,
       this.idNumero,
       this.nombre,
@@ -64,7 +64,7 @@ class Datalist {
       this.leido,
       this.datetime});
 
-  Datalist.fromJson(Map<String, dynamic> json) {
+  MessageEntity.fromJson(Map<String, dynamic> json) {
     idIncidencia = json['id_incidencia'];
     idNumero = json['id_numero'];
     nombre = json['nombre'];
@@ -72,11 +72,11 @@ class Datalist {
     texto = json['texto'];
     leido = json['leido'];
     datetime =
-        json["datetime"] != null ? DateTime.parse(json["datetime"]) : null;
+        json["datetime"] == null ? null : DateTime.parse(json["datetime"]);
   }
 
   Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id_incidencia'] = idIncidencia;
     data['id_numero'] = idNumero;
     data['nombre'] = nombre;
@@ -108,11 +108,11 @@ class DataIn {
     texto = json['texto'];
     leido = json['leido'];
     datetime =
-        json["datetime"] != null ? DateTime.parse(json["datetime"]) : null;
+        json["datetime"] == null ? null : DateTime.parse(json["datetime"]);
   }
 
   Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id_incidencia'] = idIncidencia;
     data['id_numero'] = idNumero;
     data['texto'] = texto;

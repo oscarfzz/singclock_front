@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 
 import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
-import 'package:signclock/model/app_response.dart';
+import 'package:signclock/models/app_response.dart';
 
 class AppInterceptors extends Interceptor {
   static AppInterceptors? _singleton;

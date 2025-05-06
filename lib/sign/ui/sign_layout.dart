@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
 import 'package:signclock/constant/assets.dart';
 import 'package:signclock/constant/theme.dart';
-import 'package:signclock/model/phone_model.dart';
+import 'package:signclock/models/phone_model.dart';
 
 import 'package:signclock/sign/bloc_location/location_bloc.dart';
 import 'package:signclock/sign/ui/screens_sign/content_is_outside.dart';
@@ -31,11 +31,6 @@ class SignLayout extends StatelessWidget {
 
     final AuthHyState authState = context.read<AuthHyBloc>().state;
     final PhoneModel? hydratedInfo = authState.user;
-    try {
-      context.read<LocationBloc>().add(InitEvent());
-    } catch (e) {
-      // Ignorar errores silenciosamente
-    }
 
     return SingleChildScrollView(
       child: ConstrainedBox(

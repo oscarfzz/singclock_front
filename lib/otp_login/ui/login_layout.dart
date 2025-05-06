@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
 
-import 'package:signclock/model/phone_model.dart';
+import 'package:signclock/models/phone_model.dart';
 import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
 import 'package:signclock/otp_login/ui/login_ui.dart';
 import 'package:signclock/otp_login/ui/otp_ui.dart';

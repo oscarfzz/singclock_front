@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:signclock/chats/ui/chat_list_screen.dart';
 import 'package:signclock/constant/theme.dart';
-import 'package:signclock/model/phone_model.dart';
-import 'package:signclock/model/api_response_model.dart';
+import 'package:signclock/models/phone_model.dart';
+import 'package:signclock/models/api_response_model.dart';
 
 import 'package:signclock/api_services/chat_service.dart';
 

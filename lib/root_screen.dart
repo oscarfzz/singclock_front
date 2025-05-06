@@ -84,7 +84,7 @@ class _RootScreenState extends State<RootScreen> {
           });
         }
       } else if (forceVerify) {
-        _navigationCubit.navigateTo(0, SignPage());
+        _navigationCubit.navigateTo(0, const SignPage());
       }
     } catch (e) {
       _isProcessingNavigation = false;
@@ -111,6 +111,7 @@ class _RootScreenState extends State<RootScreen> {
 
           Future.microtask(() {
             if (mounted) {
+              // ignore: use_build_context_synchronously
               Navigator.of(context)
                   .pushNamedAndRemoveUntil(
                 LoginLayout.route,
@@ -179,7 +180,7 @@ class _RootScreenState extends State<RootScreen> {
                     onTap: (index) {
                       switch (index) {
                         case 0:
-                          _navigationCubit.navigateTo(0, SignPage());
+                          _navigationCubit.navigateTo(0, const SignPage());
                           break;
                         case 1:
                           _navigationCubit.navigateTo(1, const ListadoView());

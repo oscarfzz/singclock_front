@@ -1,4 +1,4 @@
-import 'package:signclock/model/api_response_model.dart';
+import 'package:signclock/models/api_response_model.dart';
 import 'api_service.dart';
 import 'package:signclock/constant/api_constants.dart';
 import 'package:flutter/foundation.dart';

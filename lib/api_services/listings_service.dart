@@ -1,8 +1,8 @@
 import 'package:signclock/api_services/api_service.dart';
 
-import 'package:signclock/model/api_response_model.dart';
-import 'package:signclock/model/phone_model.dart';
-import 'package:signclock/model/regfi_model.dart';
+import 'package:signclock/models/api_response_model.dart';
+import 'package:signclock/models/phone_model.dart';
+import 'package:signclock/models/regfi_model.dart';
 
 import 'package:signclock/constant/api_constants.dart';
 

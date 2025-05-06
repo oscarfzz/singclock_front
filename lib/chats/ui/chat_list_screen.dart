@@ -6,7 +6,7 @@ import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
 
 import 'package:signclock/api_services/chat_service.dart';
 import 'package:signclock/chats/ui/widgets/chat_list_item.dart';
-import 'package:signclock/model/api_response_model.dart';
+import 'package:signclock/models/api_response_model.dart';
 import 'package:signclock/constant/theme.dart';
 import 'package:signclock/widgets/header_logo_layout.dart';
 

@@ -21,9 +21,7 @@ CreateChatMessageRequest _$CreateChatMessageRequestFromJson(
 
 /// @nodoc
 mixin _$CreateChatMessageRequest {
-  @JsonKey(name: "chat_id")
   int get chatId => throw _privateConstructorUsedError;
-  @JsonKey(name: "user_id")
   int get userId => throw _privateConstructorUsedError;
   String get crud => throw _privateConstructorUsedError;
   String get message => throw _privateConstructorUsedError;
@@ -44,11 +42,7 @@ abstract class $CreateChatMessageRequestCopyWith<$Res> {
           $Res Function(CreateChatMessageRequest) then) =
       _$CreateChatMessageRequestCopyWithImpl<$Res, CreateChatMessageRequest>;
   @useResult
-  $Res call(
-      {@JsonKey(name: "chat_id") int chatId,
-      @JsonKey(name: "user_id") int userId,
-      String crud,
-      String message});
+  $Res call({int chatId, int userId, String crud, String message});
 }
 
 /// @nodoc
@@ -102,11 +96,7 @@ abstract class _$$CreateChatMessageRequestImplCopyWith<$Res>
       __$$CreateChatMessageRequestImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {@JsonKey(name: "chat_id") int chatId,
-      @JsonKey(name: "user_id") int userId,
-      String crud,
-      String message});
+  $Res call({int chatId, int userId, String crud, String message});
 }
 
 /// @nodoc
@@ -154,8 +144,8 @@ class __$$CreateChatMessageRequestImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CreateChatMessageRequestImpl implements _CreateChatMessageRequest {
   _$CreateChatMessageRequestImpl(
-      {@JsonKey(name: "chat_id") required this.chatId,
-      @JsonKey(name: "user_id") required this.userId,
+      {required this.chatId,
+      required this.userId,
       required this.crud,
       required this.message});
 
@@ -163,10 +153,8 @@ class _$CreateChatMessageRequestImpl implements _CreateChatMessageRequest {
       _$$CreateChatMessageRequestImplFromJson(json);
 
   @override
-  @JsonKey(name: "chat_id")
   final int chatId;
   @override
-  @JsonKey(name: "user_id")
   final int userId;
   @override
   final String crud;
@@ -212,8 +200,8 @@ class _$CreateChatMessageRequestImpl implements _CreateChatMessageRequest {
 
 abstract class _CreateChatMessageRequest implements CreateChatMessageRequest {
   factory _CreateChatMessageRequest(
-      {@JsonKey(name: "chat_id") required final int chatId,
-      @JsonKey(name: "user_id") required final int userId,
+      {required final int chatId,
+      required final int userId,
       required final String crud,
       required final String message}) = _$CreateChatMessageRequestImpl;
 
@@ -221,10 +209,8 @@ abstract class _CreateChatMessageRequest implements CreateChatMessageRequest {
       _$CreateChatMessageRequestImpl.fromJson;
 
   @override
-  @JsonKey(name: "chat_id")
   int get chatId;
   @override
-  @JsonKey(name: "user_id")
   int get userId;
   @override
   String get crud;

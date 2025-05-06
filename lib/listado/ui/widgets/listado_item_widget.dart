@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:signclock/constant/theme.dart';
-import 'package:signclock/model/regfi_model.dart';
+import 'package:signclock/models/regfi_model.dart';
 
 // ignore: must_be_immutable
 class ListadoItemWidget extends StatelessWidget {

@@ -189,7 +189,9 @@ class __$$AuthenticatedImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AuthenticatedImpl implements Authenticated {
+class _$AuthenticatedImpl
+    with DiagnosticableTreeMixin
+    implements Authenticated {
   const _$AuthenticatedImpl(
       {this.user, this.token, required this.isAuthenticated});
 
@@ -201,8 +203,18 @@ class _$AuthenticatedImpl implements Authenticated {
   final bool isAuthenticated;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AuthHyEvent.authenticate(user: $user, token: $token, isAuthenticated: $isAuthenticated)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'AuthHyEvent.authenticate'))
+      ..add(DiagnosticsProperty('user', user))
+      ..add(DiagnosticsProperty('token', token))
+      ..add(DiagnosticsProperty('isAuthenticated', isAuthenticated));
   }
 
   @override
@@ -512,7 +524,7 @@ class __$$UserUpdatedImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$UserUpdatedImpl implements UserUpdated {
+class _$UserUpdatedImpl with DiagnosticableTreeMixin implements UserUpdated {
   const _$UserUpdatedImpl(
       {this.adminPhoneId,
       this.groupId,
@@ -571,8 +583,33 @@ class _$UserUpdatedImpl implements UserUpdated {
   final String? token;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AuthHyEvent.updateUser(adminPhoneId: $adminPhoneId, groupId: $groupId, groupName: $groupName, groupCheck: $groupCheck, groupLat: $groupLat, groupLon: $groupLon, type: $type, customCheck: $customCheck, customCheckForm: $customCheckForm, dayType: $dayType, dayForm: $dayForm, restPact: $restPact, restMinutes: $restMinutes, flex: $flex, hoursWeek: $hoursWeek, hoursYear: $hoursYear, lastSign: $lastSign, token: $token)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'AuthHyEvent.updateUser'))
+      ..add(DiagnosticsProperty('adminPhoneId', adminPhoneId))
+      ..add(DiagnosticsProperty('groupId', groupId))
+      ..add(DiagnosticsProperty('groupName', groupName))
+      ..add(DiagnosticsProperty('groupCheck', groupCheck))
+      ..add(DiagnosticsProperty('groupLat', groupLat))
+      ..add(DiagnosticsProperty('groupLon', groupLon))
+      ..add(DiagnosticsProperty('type', type))
+      ..add(DiagnosticsProperty('customCheck', customCheck))
+      ..add(DiagnosticsProperty('customCheckForm', customCheckForm))
+      ..add(DiagnosticsProperty('dayType', dayType))
+      ..add(DiagnosticsProperty('dayForm', dayForm))
+      ..add(DiagnosticsProperty('restPact', restPact))
+      ..add(DiagnosticsProperty('restMinutes', restMinutes))
+      ..add(DiagnosticsProperty('flex', flex))
+      ..add(DiagnosticsProperty('hoursWeek', hoursWeek))
+      ..add(DiagnosticsProperty('hoursYear', hoursYear))
+      ..add(DiagnosticsProperty('lastSign', lastSign))
+      ..add(DiagnosticsProperty('token', token));
   }
 
   @override
@@ -894,12 +931,20 @@ class __$$UnauthenticatedImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$UnauthenticatedImpl implements Unauthenticated {
+class _$UnauthenticatedImpl
+    with DiagnosticableTreeMixin
+    implements Unauthenticated {
   const _$UnauthenticatedImpl();
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AuthHyEvent.unauthenticate()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties..add(DiagnosticsProperty('type', 'AuthHyEvent.unauthenticate'));
   }
 
   @override
@@ -1150,7 +1195,7 @@ class __$$AuthHyStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AuthHyStateImpl implements _AuthHyState {
+class _$AuthHyStateImpl with DiagnosticableTreeMixin implements _AuthHyState {
   const _$AuthHyStateImpl(
       {required this.isAuthenticated, this.user, this.token});
 
@@ -1162,8 +1207,18 @@ class _$AuthHyStateImpl implements _AuthHyState {
   final String? token;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AuthHyState(isAuthenticated: $isAuthenticated, user: $user, token: $token)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'AuthHyState'))
+      ..add(DiagnosticsProperty('isAuthenticated', isAuthenticated))
+      ..add(DiagnosticsProperty('user', user))
+      ..add(DiagnosticsProperty('token', token));
   }
 
   @override

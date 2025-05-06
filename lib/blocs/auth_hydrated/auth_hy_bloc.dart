@@ -1,15 +1,13 @@
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
-import 'package:signclock/model/phone_model.dart';
+import 'package:signclock/models/phone_model.dart';
 
 part 'auth_hy_event.dart';
 part 'auth_hy_state.dart';
 part 'auth_hy_bloc.freezed.dart';
 
 class AuthHyBloc extends HydratedBloc<AuthHyEvent, AuthHyState> {
-  static const String _persistenceKey = 'auth_hydrated_bloc';
-
   AuthHyBloc() : super(AuthHyState.initial()) {
     on<Authenticated>(_onAuthenticated);
     on<UserUpdated>(_onUserUpdated);
@@ -27,9 +25,7 @@ class AuthHyBloc extends HydratedBloc<AuthHyEvent, AuthHyState> {
   }
 
   void _onUnauthenticated(Unauthenticated event, Emitter<AuthHyState> emit) {
-    final newState = AuthHyState.initial();
-    emit(newState);
-    _persistState(newState);
+    emit(AuthHyState.initial());
   }
 
   void _onAuthenticated(Authenticated event, Emitter<AuthHyState> emit) {
@@ -37,14 +33,12 @@ class AuthHyBloc extends HydratedBloc<AuthHyEvent, AuthHyState> {
       return;
     }
 
-    emit(AuthHyState.initial());
     final newState = AuthHyState(
       isAuthenticated: true,
       user: event.user,
       token: event.token,
     );
     emit(newState);
-    _persistState(newState);
   }
 
   void _onUserUpdated(UserUpdated event, Emitter<AuthHyState> emit) {
@@ -75,26 +69,6 @@ class AuthHyBloc extends HydratedBloc<AuthHyEvent, AuthHyState> {
     );
 
     emit(newState);
-    _persistState(newState);
-  }
-
-  void _persistState(AuthHyState stateToSave) {
-    try {
-      HydratedBloc.storage.delete(_persistenceKey);
-      Future.delayed(const Duration(milliseconds: 100), () {
-        try {
-          HydratedBloc.storage.write(_persistenceKey, toJson(stateToSave));
-        } catch (e) {
-          if (kDebugMode) {
-            print('Error al persistir estado: $e');
-          }
-        }
-      });
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error al eliminar estado anterior: $e');
-      }
-    }
   }
 
   @override
@@ -105,11 +79,9 @@ class AuthHyBloc extends HydratedBloc<AuthHyEvent, AuthHyState> {
           : null;
       final token = json['token'] as String?;
       final isAuthenticated = json['isAuthenticated'] as bool? ?? false;
+
       if ((isAuthenticated && (user == null || token == null)) ||
           (!isAuthenticated && (user != null || token != null))) {
-        try {
-          HydratedBloc.storage.delete(_persistenceKey);
-        } catch (_) {}
         return AuthHyState.initial();
       }
 
@@ -119,9 +91,9 @@ class AuthHyBloc extends HydratedBloc<AuthHyEvent, AuthHyState> {
         token: token,
       );
     } catch (e) {
-      try {
-        HydratedBloc.storage.delete(_persistenceKey);
-      } catch (_) {}
+      if (kDebugMode) {
+        print('Error al deserializar estado: $e');
+      }
       return AuthHyState.initial();
     }
   }
@@ -129,11 +101,7 @@ class AuthHyBloc extends HydratedBloc<AuthHyEvent, AuthHyState> {
   @override
   Map<String, dynamic>? toJson(AuthHyState state) {
     if (_isStateInconsistent(state)) {
-      return {
-        'isAuthenticated': false,
-        'user': null,
-        'token': null,
-      };
+      return {'isAuthenticated': false, 'user': null, 'token': null};
     }
 
     return {
@@ -142,7 +110,4 @@ class AuthHyBloc extends HydratedBloc<AuthHyEvent, AuthHyState> {
       'token': state.token,
     };
   }
-
-  @override
-  String get id => _persistenceKey;
 }

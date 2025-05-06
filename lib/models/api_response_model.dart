@@ -52,19 +52,13 @@ class ApiResponseModel<T> extends Equatable {
     Map<String, dynamic> json,
     T Function(Object? json) fromJsonT,
   ) {
-    return ApiResponseModel<T>(
-      status: json['status'] as String,
-      msg: json['msg'] as String,
-      token: json['token'] as String?, // Captura el token desde el JSON
-      data: json['data'] == null ? null : fromJsonT(json['data']),
-    );
+    return _$ApiResponseModelFromJson(json, fromJsonT);
   }
 
   Map<String, dynamic> toJson(
     Object? Function(T? value) toJsonT,
   ) {
-    return _$ApiResponseModelToJson(this, toJsonT)
-      ..['token'] = token; // Añade el token en la serialización
+    return _$ApiResponseModelToJson(this, toJsonT);
   }
 
   @override

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:signclock/model/regfi_model.dart';
+import 'package:signclock/models/regfi_model.dart';
 import 'listado_item_widget.dart';
 
 class ListadoListWidget extends StatelessWidget {

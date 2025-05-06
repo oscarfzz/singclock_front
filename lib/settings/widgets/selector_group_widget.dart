@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
-import 'package:signclock/model/group_model.dart';
+import 'package:signclock/models/group_model.dart';
 
 class SelectorGroupWidget extends StatelessWidget {
   final GroupModel selectedGroup;

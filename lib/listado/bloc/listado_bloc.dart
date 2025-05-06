@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:signclock/api_services/listings_service.dart';
 import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
-import 'package:signclock/model/regfi_model.dart';
+import 'package:signclock/models/regfi_model.dart';
 
 part 'listado_event.dart';
 part 'listado_state.dart';

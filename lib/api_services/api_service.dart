@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 
-import 'package:signclock/model/api_response_model.dart';
+import 'package:signclock/models/api_response_model.dart';
 
 import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
 

@@ -7,13 +7,53 @@ import 'package:signclock/api_services/sign_services.dart';
 
 import 'sign_layout.dart';
 
-class SignPage extends StatelessWidget {
-  SignPage({super.key});
+class SignPage extends StatefulWidget {
+  const SignPage({super.key});
 
+  @override
+  State<SignPage> createState() => _SignPageState();
+}
+
+class _SignPageState extends State<SignPage>
+    with AutomaticKeepAliveClientMixin {
+  LocationBloc? _locationBloc;
   final LocationRepository _locationRepository = LocationRepository();
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    _initLocationBloc();
+  }
+
+  void _initLocationBloc() {
+    final authBloc = context.read<AuthHyBloc>();
+
+    if (authBloc.state.isAuthenticated && authBloc.state.user != null) {
+      _locationBloc = LocationBloc(
+        locationRepository: _locationRepository,
+        authBloc: authBloc,
+        signServices: SignServices(authBloc),
+      );
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_locationBloc != null && !_locationBloc!.isClosed) {
+          _locationBloc!.add(InitEvent());
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final authBloc = context.read<AuthHyBloc>();
 
     if (authBloc.state.user == null) {
@@ -22,20 +62,17 @@ class SignPage extends StatelessWidget {
       );
     }
 
-    return BlocProvider<LocationBloc>(
-      create: (_) {
-        final locationBloc = LocationBloc(
-          locationRepository: _locationRepository,
-          authBloc: authBloc,
-          signServices: SignServices(authBloc),
-        );
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!locationBloc.isClosed) {
-            locationBloc.add(InitEvent());
-          }
-        });
-        return locationBloc;
-      },
+    if (_locationBloc == null) {
+      _initLocationBloc();
+    }
+
+    return BlocProvider<LocationBloc>.value(
+      value: _locationBloc ??
+          LocationBloc(
+            locationRepository: _locationRepository,
+            authBloc: authBloc,
+            signServices: SignServices(authBloc),
+          ),
       child: const SignLayout(),
     );
   }

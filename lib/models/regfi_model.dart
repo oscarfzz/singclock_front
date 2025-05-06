@@ -1,86 +1,65 @@
 // To parse this JSON data, do
 //
-//     final regFi = regFiFromJson(jsonString);
+//     final regFiModel = regFiModelFromJson(jsonString);
 
 import 'dart:convert';
 
-RegFi regFiFromJson(String str) => RegFi.fromJson(json.decode(str));
+List<RegFiModel> regFiModelFromJson(String str) =>
+    List<RegFiModel>.from(json.decode(str).map((x) => RegFiModel.fromJson(x)));
 
-String regFiToJson(RegFi data) => json.encode(data.toJson());
+String regFiModelToJson(List<RegFiModel> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-class RegFi {
-  RegFi({
-    this.success = '200',
-    required this.datalist,
-  });
+class RegFiModel {
+  int regId;
+  int groupPhoneId;
+  DateTime currentdate;
+  String currenttime;
+  double lat;
+  double lon;
+  DateTime timestamp;
+  bool validated;
+  String elapsedTime;
+  String type;
 
-  String success;
-  List<Datalist> datalist;
-
-  factory RegFi.fromJson(Map<String, dynamic> json) => RegFi(
-        success: json["success"],
-        datalist: List<Datalist>.from(
-            json["datalist"].map((x) => Datalist.fromJson(x))),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "success": success,
-        "datalist": List<dynamic>.from(datalist.map((x) => x.toJson())),
-      };
-}
-
-class Datalist {
-  Datalist({
-    required this.idReg,
-    required this.idNumero,
+  RegFiModel({
+    required this.regId,
+    required this.groupPhoneId,
     required this.currentdate,
     required this.currenttime,
     required this.lat,
     required this.lon,
-    required this.time,
-    required this.validado,
-    required this.tiempo,
-    required this.tipo,
+    required this.timestamp,
+    required this.validated,
+    required this.elapsedTime,
+    required this.type,
   });
 
-  String idReg;
-  String idNumero;
-  String currentdate;
-  String currenttime;
-  String lat;
-  String lon;
-  String time;
-  String validado;
-  String tiempo;
-  String tipo;
-
-  factory Datalist.fromJson(Map<String, dynamic> json) => Datalist(
-        idReg: json["id_reg"],
-        idNumero: json["id_numero"],
-        currentdate: json["currentdate"], //DateTime.parse(json["currentdate"]),
-        currenttime: json["currenttime"], //DateTime.parse(json["currenttime"]),
-        lat: json["lat"],
-        lon: json["lon"],
-        time: json["time"], //DateTime.parse(json["time"]),
-        validado: json["validado"],
-        tiempo: json["tiempo"].toString(),
-        tipo: json["tipo"],
+  factory RegFiModel.fromJson(Map<String, dynamic> json) => RegFiModel(
+        regId: json["reg_id"],
+        groupPhoneId: json["group_phone_id"],
+        currentdate: DateTime.parse(json["currentdate"]),
+        currenttime: json["currenttime"],
+        lat: json["lat"]?.toDouble(),
+        lon: json["lon"]?.toDouble(),
+        timestamp: DateTime.parse(json["timestamp"]),
+        validated: json["validated"],
+        elapsedTime: json["elapsed_time"],
+        type: json["type"],
       );
 
   Map<String, dynamic> toJson() => {
-        "id_reg": idReg,
-        "id_numero": idNumero,
+        "reg_id": regId,
+        "group_phone_id": groupPhoneId,
+        // "currentdate": "${currentdate.year.toString().padLeft(4, '0')}-${currentdate.month.toString().padLeft(2, '0')}-${currentdate.day.toString().padLeft(2, '0')}",
         "currentdate": currentdate,
-//            "${currentdate.year.toString().padLeft(4, '0')}-${currentdate.month.toString().padLeft(2, '0')}-${currentdate.day.toString().padLeft(2, '0')}",
-        //"currenttime": currenttime,
         "currenttime": currenttime,
-//            "${currenttime.hour.toString().padLeft(2, '0')}:${currenttime.minute.toString().padLeft(2, '0')}:${currenttime.second.toString().padLeft(2, '0')}",
         "lat": lat,
         "lon": lon,
-        "time": time,
-//          time.toIso8601String(),
-        "validado": validado,
-        "tiempo": tiempo,
-        "tipo": tipo,
+        // "timestamp": timestamp.toIso8601String(),
+        "timestamp": timestamp,
+        "validated": validated,
+        "elapsed_time": elapsedTime,
+        "type": type,
       };
 }

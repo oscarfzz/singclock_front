@@ -1,4 +1,4 @@
-import 'package:signclock/model/phone_model.dart';
+import 'package:signclock/models/phone_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
 

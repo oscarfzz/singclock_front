@@ -7,8 +7,8 @@ import 'package:signclock/constant/assets.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:signclock/constant/theme.dart';
-import 'package:signclock/model/api_response_model.dart';
-import 'package:signclock/model/phone_model.dart';
+import 'package:signclock/models/api_response_model.dart';
+import 'package:signclock/models/phone_model.dart';
 import 'package:signclock/otp_login/ui/login_layout.dart';
 import 'package:signclock/widgets/boton_redondeado.dart';
 import 'package:signclock/widgets/backgroud_wd.dart';
