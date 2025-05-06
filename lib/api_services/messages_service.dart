@@ -7,7 +7,7 @@ import 'package:signclock/chats/model/request/create_chat_message_request.dart';
 import 'package:signclock/constant/api_constants.dart';
 
 class MessageService extends ApiService {
-  MessageService(super.authBloc);
+  MessageService(super.dio, [super.authBlocForLogout]);
 
   Future<ApiResponseModel<ChatMessage?>> createChatMessage(
       CreateChatMessageRequest request, String socketId) async {

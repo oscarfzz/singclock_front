@@ -8,7 +8,7 @@ import 'package:signclock/models/phone_model.dart';
 import 'package:signclock/constant/api_constants.dart';
 
 class ChatService extends ApiService {
-  ChatService(super.authBloc);
+  ChatService(super.dio, [super.authBlocForLogout]);
 
   Future<ApiResponseModel<ChatModel?>> createChat(
       int phoneId, String chatName) async {

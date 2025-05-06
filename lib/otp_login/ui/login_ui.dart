@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:signclock/api_services/login_service.dart';
 import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
+import 'package:signclock/chats/utils/dio_client.dart';
 import 'package:signclock/constant/assets.dart';
 import 'package:signclock/constant/theme.dart';
 import 'package:signclock/models/api_response_model.dart';
@@ -39,7 +40,8 @@ class _LoginUiState extends State<LoginUi> {
     super.initState();
 
     _authHyBloc = context.read<AuthHyBloc>();
-    _loginService = LoginService(_authHyBloc);
+    final dioClient = DioClient(_authHyBloc);
+    _loginService = LoginService(dioClient.instance, _authHyBloc);
   }
 
   void _startLoginProcess(String parsableNumber) async {

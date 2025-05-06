@@ -7,27 +7,28 @@ import 'package:signclock/models/regfi_model.dart';
 import 'package:signclock/constant/api_constants.dart';
 
 class ListingService extends ApiService {
-  ListingService(super.authBloc);
+  ListingService(super.dio, [super.authBlocForLogout]);
 
   Future<ApiResponseModel<List<RegFiModel>>> getRegs(
-      PhoneModel phoneModel) async {
+    PhoneModel phoneModel,
+  ) async {
     return await apiRequest<List<RegFiModel>>(
       endpoint: ApiConstants.signList,
-      data: {
-        "phone_id": phoneModel.phoneId,
-        "group_phone_id": phoneModel.groupPhoneId
-      },
+      data: phoneModel.toJson(),
       fromJson: (dynamic json) {
         if (json is List) {
           try {
-            return List<RegFiModel>.from(json.map((x) {
-              if (x is Map<String, dynamic>) {
-                return RegFiModel.fromJson(x);
-              } else {
-                throw FormatException(
-                    "Elemento inválido en la lista de fichajes: $x");
-              }
-            }));
+            return List<RegFiModel>.from(
+              json.map((x) {
+                if (x is Map<String, dynamic>) {
+                  return RegFiModel.fromJson(x);
+                } else {
+                  throw FormatException(
+                    "Elemento inválido en la lista de fichajes: $x",
+                  );
+                }
+              }),
+            );
           } catch (e) {
             return <RegFiModel>[];
           }

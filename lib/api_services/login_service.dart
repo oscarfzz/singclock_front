@@ -4,14 +4,13 @@ import 'package:signclock/constant/api_constants.dart';
 import 'package:flutter/foundation.dart';
 
 class LoginService extends ApiService {
-  LoginService(super.authBloc);
+  LoginService(super.dio, [super.authBlocForLogout]);
 
   Future<ApiResponseModel<Map<String, dynamic>>> authenticatePhone(
       String phoneNumber) async {
     return await apiRequest<Map<String, dynamic>>(
       endpoint: ApiConstants.login,
       data: {"phone_number": phoneNumber},
-      tokenHeader: false,
       fromJson: (dynamic json) {
         if (json is Map) {
           return Map<String, dynamic>.from(
@@ -34,7 +33,6 @@ class LoginService extends ApiService {
     return await apiRequest<Map<String, dynamic>>(
       endpoint: ApiConstants.otp,
       data: {"phone_number": phoneNumber, "phone_code": otpCode},
-      tokenHeader: false,
       fromJson: (dynamic json) {
         if (json is Map) {
           return Map<String, dynamic>.from(

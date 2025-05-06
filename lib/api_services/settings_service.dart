@@ -8,7 +8,7 @@ import 'package:signclock/models/phone_model.dart';
 import 'package:signclock/constant/api_constants.dart';
 
 class SettingsService extends ApiService {
-  SettingsService(super.authBloc);
+  SettingsService(super.dio, [super.authBlocForLogout]);
 
   Future<ApiResponseModel<List<GroupModel>>> getGroupsList(int phoneId) async {
     return await apiRequest<List<GroupModel>>(

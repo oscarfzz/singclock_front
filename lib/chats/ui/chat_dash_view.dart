@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:intl/intl.dart';
 import 'package:signclock/chats/model/request/create_chat_message_request.dart';
+import 'package:signclock/chats/utils/dio_client.dart';
 
 import 'package:signclock/api_services/messages_service.dart';
 
@@ -37,7 +38,8 @@ class _ChatDashViewState extends State<ChatDashView> {
     super.initState();
 
     _authHyBloc = context.read<AuthHyBloc>();
-    _messageService = MessageService(_authHyBloc);
+    final dioClient = DioClient(_authHyBloc);
+    _messageService = MessageService(dioClient.instance, _authHyBloc);
     _initializeUser();
     _loadMessages();
   }

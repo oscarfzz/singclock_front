@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:signclock/chats/ui/chat_list_screen.dart';
+import 'package:signclock/chats/utils/dio_client.dart';
 import 'package:signclock/constant/theme.dart';
 import 'package:signclock/models/phone_model.dart';
 import 'package:signclock/models/api_response_model.dart';
@@ -34,7 +35,8 @@ class AddChatState extends State<AddChat> {
       final params = _validateParams();
 
       final authBloc = BlocProvider.of<AuthHyBloc>(context);
-      final chatService = ChatService(authBloc);
+      final dioClient = DioClient(authBloc);
+      final chatService = ChatService(dioClient.instance, authBloc);
 
       final ChatModel chat = await _createGroup(
           chatService, authBloc.state.user!.phoneId, params.$1);

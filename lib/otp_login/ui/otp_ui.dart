@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:signclock/api_services/login_service.dart';
 import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
+import 'package:signclock/chats/utils/dio_client.dart';
 import 'package:signclock/constant/assets.dart';
 import 'package:flutter/foundation.dart';
 
@@ -36,7 +37,8 @@ class _OtpUiState extends State<OtpUi> {
   @override
   void initState() {
     _authHyBloc = context.read<AuthHyBloc>();
-    _loginService = LoginService(_authHyBloc);
+    final dioClient = DioClient(_authHyBloc);
+    _loginService = LoginService(dioClient.instance, _authHyBloc);
 
     super.initState();
   }
@@ -57,11 +59,25 @@ class _OtpUiState extends State<OtpUi> {
             "Response from /otp: Status=${response.status}, Token=${response.token}, Message=${response.msg}, Data=${response.data}");
       }
 
-      if (response.status == "success" && response.token != null) {
+      String? effectiveToken = response.token;
+      if ((effectiveToken == null || effectiveToken.isEmpty) &&
+          response.data != null &&
+          response.data!.containsKey('token')) {
+        effectiveToken = response.data!['token'] as String?;
+      }
+
+      if (response.status == "success" &&
+          effectiveToken != null &&
+          effectiveToken.isNotEmpty) {
         PhoneModel phoneModel = PhoneModel.fromJson(response.data!);
-        _responseOk(phoneModel, response.token);
+        _responseOk(phoneModel, effectiveToken);
       } else {
-        _responseKo(response.msg);
+        if (effectiveToken == null || effectiveToken.isEmpty) {
+          _responseKo(
+              "Error de autenticación: No se recibió token del servidor");
+        } else {
+          _responseKo(response.msg);
+        }
       }
     } catch (e) {
       _responseKo(e.toString());

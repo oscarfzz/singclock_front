@@ -1,24 +1,20 @@
 import 'package:dio/dio.dart';
 import 'package:signclock/constant/api_constants.dart';
+import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
 
 import 'app_interceptors.dart';
 
 class DioClient {
-  static DioClient? _singleton;
+  late Dio _dio;
+  final AuthHyBloc authBloc;
 
-  static late Dio _dio;
-
-  DioClient._() {
-    _dio = createDioClient();
-  }
-
-  factory DioClient() {
-    return _singleton ??= DioClient._();
+  DioClient(this.authBloc) {
+    _dio = _createDioClient();
   }
 
   Dio get instance => _dio;
 
-  Dio createDioClient() {
+  Dio _createDioClient() {
     final dio = Dio(
       BaseOptions(
         baseUrl: ApiConstants.baseUrl,
@@ -33,16 +29,7 @@ class DioClient {
     );
 
     dio.interceptors.addAll([
-      // PrettyDioLogger(
-      //   requestHeader: true,
-      //   requestBody: true,
-      //   responseBody: true,
-      //   responseHeader: true,
-      //   error: true,
-      //   compact: true,
-      //   maxWidth: 90,
-      // ),
-      AppInterceptors(),
+      AppInterceptors(authBloc),
     ]);
 
     return dio;

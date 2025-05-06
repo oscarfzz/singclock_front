@@ -11,7 +11,7 @@ import 'package:signclock/models/sign_model.dart';
 import 'package:signclock/constant/api_constants.dart';
 
 class SignServices extends ApiService {
-  SignServices(super.authBloc);
+  SignServices(super.dio, [super.authBlocForLogout]);
 
   Future<ApiResponseModel<SignModel?>> postSign(SignModel signModel) async {
     return await apiRequest<SignModel?>(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:signclock/api_services/listings_service.dart';
 import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
+import 'package:signclock/chats/utils/dio_client.dart';
 import 'package:signclock/widgets/header_logo_layout.dart';
 
 import '../bloc/listado_bloc.dart';
@@ -12,10 +13,13 @@ class ListadoView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authBloc = context.read<AuthHyBloc>();
+    final dioClient = DioClient(authBloc);
+
     return BlocProvider<ListadoBloc>(
       create: (context) => ListadoBloc(
-        authHyBloc: context.read<AuthHyBloc>(),
-        listingService: ListingService(context.read<AuthHyBloc>()),
+        authHyBloc: authBloc,
+        listingService: ListingService(dioClient.instance, authBloc),
       )..add(LoadListadoEvent()),
       child: const _ListadoBody(),
     );

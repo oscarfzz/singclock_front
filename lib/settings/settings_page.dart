@@ -14,6 +14,7 @@ import 'package:signclock/settings/widgets/top_screen_stt.dart';
 
 import './widgets/enum_day.dart';
 import 'package:signclock/services/logout_service.dart';
+import 'package:signclock/chats/utils/dio_client.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -48,7 +49,8 @@ class _SettingsPageState extends State<SettingsPage> {
     super.initState();
 
     _authHyBloc = context.read<AuthHyBloc>();
-    _settingsService = SettingsService(_authHyBloc);
+    final dioClient = DioClient(_authHyBloc);
+    _settingsService = SettingsService(dioClient.instance, _authHyBloc);
     // _user = _authHyBloc.state.user;
     if (kDebugMode) {
       print("User: $_user");

@@ -9,48 +9,25 @@ import 'constant/theme.dart';
 import 'otp_login/ui/login_layout.dart';
 import 'root_screen.dart';
 
-// Variable global para acceder al storage de HydratedBloc
-late HydratedStorage hydratedStorage;
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await _initializeHydratedStorage();
-
-  try {
-    runApp(AppRoot(authBloc: AuthHyBloc()));
-  } catch (e) {
-    runApp(const AppRoot());
-  }
-}
-
-Future<void> _initializeHydratedStorage() async {
   final storageDirectory = kIsWeb
       ? HydratedStorage.webStorageDirectory
-      : await getTemporaryDirectory();
+      : await getApplicationDocumentsDirectory();
 
-  for (int attempt = 1; attempt <= 3; attempt++) {
-    try {
-      hydratedStorage = await HydratedStorage.build(
-        storageDirectory: storageDirectory,
-      );
-      HydratedBloc.storage = hydratedStorage;
-      return;
-    } catch (e) {
-      if (attempt == 3) rethrow;
-      await Future.delayed(const Duration(milliseconds: 300));
-    }
-  }
+  HydratedBloc.storage = await HydratedStorage.build(
+    storageDirectory: storageDirectory,
+  );
+  runApp(const AppRoot());
 }
 
 class AppRoot extends StatelessWidget {
-  final AuthHyBloc? authBloc;
-  const AppRoot({this.authBloc, super.key});
-
+  const AppRoot({super.key});
   @override
   Widget build(BuildContext context) {
     return BlocProvider<AuthHyBloc>(
-      create: (context) => authBloc ?? AuthHyBloc(),
+      create: (context) => AuthHyBloc(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(

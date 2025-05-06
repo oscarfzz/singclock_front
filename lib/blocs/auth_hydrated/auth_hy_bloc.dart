@@ -18,6 +18,8 @@ class AuthHyBloc extends HydratedBloc<AuthHyEvent, AuthHyState> {
     }
   }
 
+  String? get currentToken => state.token;
+
   bool _isStateInconsistent(AuthHyState state) {
     return (state.isAuthenticated &&
             (state.user == null || state.token == null)) ||

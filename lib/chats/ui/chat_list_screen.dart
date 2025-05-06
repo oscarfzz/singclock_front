@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
+import 'package:signclock/chats/utils/dio_client.dart';
 
 import 'package:signclock/api_services/chat_service.dart';
 import 'package:signclock/chats/ui/widgets/chat_list_item.dart';
@@ -35,7 +36,8 @@ class _ChatListScreenState extends State<ChatListScreen> {
   void initState() {
     super.initState();
     _authHyBloc = context.read<AuthHyBloc>();
-    _chatService = ChatService(_authHyBloc);
+    final dioClient = DioClient(_authHyBloc);
+    _chatService = ChatService(dioClient.instance, _authHyBloc);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         _updateData();

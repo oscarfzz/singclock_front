@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:signclock/models/api_response_model.dart';
@@ -9,42 +6,22 @@ import 'package:signclock/models/api_response_model.dart';
 import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
 
 class ApiService {
-  final AuthHyBloc authBloc;
-  late final Dio _dio;
+  final Dio _dio;
+  final AuthHyBloc? _authBlocForLogout;
 
-  ApiService(this.authBloc) {
-    final options = BaseOptions(
-      connectTimeout: const Duration(seconds: 15),
-      receiveTimeout: const Duration(seconds: 30),
-      validateStatus: (status) => status! < 500,
-      headers: {
-        "Accept": "application/json",
-      },
-    );
-    _dio = Dio(options);
-
-    if (kDebugMode) {
-      final adapter = _dio.httpClientAdapter as IOHttpClientAdapter;
-      adapter.createHttpClient = () {
-        final client = HttpClient();
-        client.badCertificateCallback =
-            (X509Certificate cert, String host, int port) => true;
-        return client;
-      };
-    }
-  }
+  ApiService(this._dio, [this._authBlocForLogout]);
 
   Future<ApiResponseModel<T>> apiRequest<T>(
       {required String endpoint,
       required dynamic data,
       Map<String, String>? headers,
-      bool tokenHeader = true,
       required T Function(dynamic json) fromJson}) async {
     try {
-      if (tokenHeader) {
-        final token = authBloc.state.token;
-        if (token != null) {
-          headers = {'X-Token': token, ...?headers};
+      Map<String, String> allHeaders = {...?headers};
+      if (_authBlocForLogout != null) {
+        final token = _authBlocForLogout.currentToken;
+        if (token != null && token.isNotEmpty) {
+          allHeaders["X-Token"] = token;
         }
       }
 
@@ -52,7 +29,7 @@ class ApiService {
         endpoint,
         data: data,
         options: Options(headers: {
-          ...?headers,
+          ...allHeaders,
           "Content-Type": "application/json",
         }),
       );
@@ -68,9 +45,14 @@ class ApiService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseBody = response.data as Map<dynamic, dynamic>? ?? {};
-        final String? tokenFromHeader = response.headers.value('x-token');
+
+        String? tokenFromHeader = response.headers.value('x-token');
+        if (tokenFromHeader == null || tokenFromHeader.isEmpty) {
+          tokenFromHeader = responseBody['token'] as String?;
+        }
 
         final dynamic dataFieldContent = responseBody['data'];
+        final String status = responseBody['status'] as String? ?? 'success';
 
         T parsedData;
         try {
@@ -93,7 +75,7 @@ class ApiService {
         }
 
         return ApiResponseModel<T>(
-            status: responseBody['status'] as String? ?? 'success',
+            status: status,
             msg: responseBody['msg'] as String? ?? '',
             data: parsedData,
             token: tokenFromHeader);
@@ -102,16 +84,11 @@ class ApiService {
           print(
               "Received 401 Unauthorized. Scheduling Unauthentication event.");
         }
-        Future.microtask(() {
-          if (!authBloc.isClosed) {
-            authBloc.add(const Unauthenticated());
-          } else {
-            if (kDebugMode) {
-              print(
-                  "AuthHyBloc was closed before Unauthenticated could be added.");
-            }
-          }
-        });
+        if (_authBlocForLogout != null && !_authBlocForLogout.isClosed) {
+          Future.microtask(() {
+            _authBlocForLogout.add(const Unauthenticated());
+          });
+        }
         return ApiResponseModel<T>(
             status: 'error',
             msg: response.data?['msg'] ?? 'No autorizado o sesión expirada',
@@ -136,6 +113,13 @@ class ApiService {
             data: null);
       }
     } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        if (_authBlocForLogout != null && !_authBlocForLogout.isClosed) {
+          Future.microtask(() {
+            _authBlocForLogout.add(const Unauthenticated());
+          });
+        }
+      }
       if (kDebugMode) {
         print("===== DioException =====");
         print("Endpoint: $endpoint");

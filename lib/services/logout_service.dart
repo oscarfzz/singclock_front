@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
-import 'package:signclock/main.dart';
 import 'package:signclock/otp_login/ui/login_layout.dart';
 
 class LogoutService {
@@ -38,7 +37,7 @@ class LogoutService {
     for (int attempt = 1; attempt <= 3; attempt++) {
       try {
         await HydratedBloc.storage.delete('auth_hydrated_bloc');
-        await hydratedStorage.clear();
+        await HydratedBloc.storage.clear();
         return;
       } catch (_) {
         await Future.delayed(const Duration(milliseconds: 200));
