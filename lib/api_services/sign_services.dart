@@ -22,21 +22,24 @@ class SignServices extends ApiService {
     );
   }
 
-  Future<ApiResponseModel<Map<String, dynamic>?>> getSignList(
+  Future<ApiResponseModel<List<dynamic>?>> getSignList(
       PhoneModel phoneModel) async {
-    return await apiRequest<Map<String, dynamic>?>(
+    return await apiRequest<List<dynamic>?>(
       endpoint: ApiConstants.signList,
       data: phoneModel.toJson(),
       fromJson: (dynamic json) {
-        if (json is Map) {
-          return Map<String, dynamic>.from(
-              json.map((key, value) => MapEntry(key.toString(), value)));
+        if (json is List) {
+          return json;
+        } else if (json is Map &&
+            json.containsKey('data') &&
+            json['data'] is List) {
+          return json['data'] as List<dynamic>;
         } else if (json == null) {
           return null;
         }
         if (kDebugMode) {
           print(
-              "WARN: Expected Map or null in fromJson for getSignList, got ${json.runtimeType}");
+              "WARN: Expected List or Map with 'data' key for getSignList, got ${json.runtimeType}");
         }
         return null;
       },
@@ -45,7 +48,16 @@ class SignServices extends ApiService {
 
   Future<String?> hadleSign(
       SignModel data, AuthHyBloc authBloc, SignServices signServices) async {
+    if (kDebugMode) {
+      print("SignServices: Enviando fichaje de tipo: ${data.type}");
+    }
+
     var retData = await signServices.postSign(data);
+
+    if (kDebugMode) {
+      print(
+          "SignServices: Respuesta de API para fichaje: status=${retData.status}, tipo=${retData.data?.type}");
+    }
 
     if (retData.status == "success") {
       authBloc.add(UserUpdated(

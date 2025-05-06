@@ -9,7 +9,7 @@ import 'package:equatable/equatable.dart';
 import 'package:signclock/sign/services/current_location_is_valid.dart';
 import 'package:signclock/api_services/sign_services.dart';
 import 'package:signclock/blocs/auth_hydrated/auth_hy_bloc.dart';
-import 'package:signclock/model/sign_model.dart';
+import 'package:signclock/models/sign_model.dart';
 import 'package:signclock/sign/services/app_error.dart';
 import 'package:signclock/sign/location_repo/current_user_location_entity.dart';
 import 'package:signclock/sign/location_repo/location_repository.dart';
@@ -24,6 +24,7 @@ class LocationBloc extends HydratedBloc<LocationEvent, LocationState> {
   final LocationRepository locationRepository;
   final AuthHyBloc authBloc;
   final SignServices signServices;
+  bool _isProcessingEvent = false;
 
   LocationBloc({
     required this.locationRepository,
@@ -40,44 +41,95 @@ class LocationBloc extends HydratedBloc<LocationEvent, LocationState> {
 
   Future<void> _handleInitEvent(
       InitEvent event, Emitter<LocationState> emit) async {
-    final AuthHyState authState;
-    if (!authBloc.state.isAuthenticated || authBloc.state.token == null) {
-      try {
-        authState = await authBloc.stream
-            .firstWhere((state) => state.isAuthenticated && state.token != null)
-            .timeout(const Duration(seconds: 5));
-      } catch (e) {
-        _emitErrorState(
-            const AppError('No se pudo confirmar la autenticación'), emit);
+    if (_isProcessingEvent) return;
+    _isProcessingEvent = true;
+
+    try {
+      final AuthHyState authState;
+      if (!authBloc.state.isAuthenticated || authBloc.state.token == null) {
+        try {
+          authState = await authBloc.stream
+              .firstWhere(
+                  (state) => state.isAuthenticated && state.token != null)
+              .timeout(const Duration(seconds: 5));
+        } catch (e) {
+          if (!emit.isDone) {
+            _emitErrorState(
+                const AppError('No se pudo confirmar la autenticación'), emit);
+          }
+          _isProcessingEvent = false;
+          return;
+        }
+      } else {
+        authState = authBloc.state;
+      }
+
+      if (authState.user == null) {
+        if (!emit.isDone) {
+          _emitErrorState(
+              const AppError(
+                  'Estado de autenticación inconsistente: Usuario nulo'),
+              emit);
+        }
+        _isProcessingEvent = false;
         return;
       }
-    } else {
-      authState = authBloc.state;
-    }
+      final currentUser = authState.user!;
 
-    if (authState.user == null) {
-      _emitErrorState(
-          const AppError('Estado de autenticación inconsistente: Usuario nulo'),
-          emit);
-      return;
-    }
-    final currentUser = authState.user!;
+      if (!emit.isDone) {
+        _emitLoadingState(emit);
+      }
 
-    _emitLoadingState(emit);
-    try {
-      await _emitStateFromLastSign(currentUser.lastSign, emit);
-    } catch (e) {
-      _emitErrorState(e, emit);
+      try {
+        final lastSign = currentUser.lastSign;
+        final status = {
+              'E': LocationStateStatus.working,
+              'DE': LocationStateStatus.working,
+              'DS': LocationStateStatus.resting,
+              'S': LocationStateStatus.outside,
+            }[lastSign] ??
+            LocationStateStatus.outside;
+
+        if (kDebugMode) {
+          print(
+              "LocationBloc: InitEvent - Estado inicial según lastSign ($lastSign): $status");
+        }
+
+        if (!emit.isDone) {
+          emit(state.copyWith(
+            status: status,
+            errorMessage: null,
+          ));
+        }
+      } catch (e) {
+        if (!emit.isDone) {
+          _emitErrorState(e, emit);
+        }
+      }
+    } finally {
+      _isProcessingEvent = false;
     }
   }
 
   Future<void> _handleSignEvent(
       LocationEvent event, Emitter<LocationState> emit) async {
-    _emitLoadingState(emit);
+    if (_isProcessingEvent) return;
+    _isProcessingEvent = true;
+
     try {
-      await _validateLocationAndProcessSign(event, emit);
-    } on AppError catch (e) {
-      _emitErrorState(e, emit);
+      if (!emit.isDone) {
+        _emitLoadingState(emit);
+      }
+
+      try {
+        await _validateLocationAndProcessSign(event, emit);
+      } on AppError catch (e) {
+        if (!emit.isDone) {
+          _emitErrorState(e, emit);
+        }
+      }
+    } finally {
+      _isProcessingEvent = false;
     }
   }
 
@@ -87,8 +139,10 @@ class LocationBloc extends HydratedBloc<LocationEvent, LocationState> {
     if (!authState.isAuthenticated ||
         authState.token == null ||
         authState.user == null) {
-      _emitErrorState(
-          const AppError('Usuario no autenticado para fichar'), emit);
+      if (!emit.isDone) {
+        _emitErrorState(
+            const AppError('Usuario no autenticado para fichar'), emit);
+      }
       return;
     }
 
@@ -99,16 +153,47 @@ class LocationBloc extends HydratedBloc<LocationEvent, LocationState> {
     }
 
     final signData = _buildSignModel(event, currentLocation);
+
+    if (kDebugMode) {
+      print(
+          "LocationBloc: Evento: ${event.runtimeType}, Tipo de fichaje: ${signData.type}");
+    }
+
     final signType =
         await signServices.hadleSign(signData, authBloc, signServices);
 
     if (signType != null) {
-      _emitStateFromLastSign(signType, emit, currentLocation);
+      if (kDebugMode) {
+        print("LocationBloc: Tipo de fichaje registrado: $signType");
+      }
+
+      if (!emit.isDone) {
+        final status = {
+              'E': LocationStateStatus.working,
+              'DE': LocationStateStatus.working,
+              'DS': LocationStateStatus.resting,
+              'S': LocationStateStatus.outside,
+            }[signType] ??
+            LocationStateStatus.error;
+
+        if (kDebugMode) {
+          print(
+              "LocationBloc: Emitiendo estado UI basado en fichaje actual: $signType -> $status");
+        }
+
+        emit(state.copyWith(
+          status: status,
+          currentUserLocation: currentLocation,
+          errorMessage: null,
+        ));
+      }
     }
   }
 
   void _handleCancelEvent(CancelEvent event, Emitter<LocationState> emit) {
-    emit(state.copyWith(status: LocationStateStatus.outside));
+    if (!emit.isDone) {
+      emit(state.copyWith(status: LocationStateStatus.outside));
+    }
   }
 
   SignModel _buildSignModel(
@@ -129,108 +214,33 @@ class LocationBloc extends HydratedBloc<LocationEvent, LocationState> {
     );
   }
 
-  Future<void> _emitStateFromLastSign(
-      String lastSign, Emitter<LocationState> emit,
-      [CurrentUserLocationEntity? currentLocation]) async {
-    final currentPhoneModel = authBloc.state.user;
-    if (currentPhoneModel == null) {
-      if (!emit.isDone) {
-        _emitErrorState(
-            const AppError('Usuario no disponible en _emitStateFromLastSign'),
-            emit);
-      }
-      return;
-    }
-
-    final initialStatus = {
-          'E': LocationStateStatus.working,
-          'DE': LocationStateStatus.working,
-          'DS': LocationStateStatus.resting,
-          'S': LocationStateStatus.outside,
-        }[lastSign] ??
-        LocationStateStatus.error;
-    if (!emit.isDone) {
-      emit(state.copyWith(
-        status: initialStatus,
-        currentUserLocation: currentLocation,
-        errorMessage: initialStatus == LocationStateStatus.error
-            ? 'Estado local inválido: $lastSign'
-            : null,
-      ));
-    }
-
-    try {
-      final apiResponse = await signServices.getActualStatus(currentPhoneModel);
-
-      if (apiResponse.status == "success" && apiResponse.data != null) {
-        final String? serverSignType =
-            apiResponse.data!['last_sign'] as String?;
-
-        if (serverSignType != null) {
-          final serverStatus = {
-                'E': LocationStateStatus.working,
-                'DE': LocationStateStatus.working,
-                'DS': LocationStateStatus.resting,
-                'S': LocationStateStatus.outside,
-              }[serverSignType] ??
-              LocationStateStatus.error;
-
-          if (!emit.isDone) {
-            if (kDebugMode) {
-              print(
-                  "LocationBloc: Server status received (from 'last_sign'): $serverSignType -> $serverStatus");
-            }
-            emit(state.copyWith(
-              status: serverStatus,
-              errorMessage: serverStatus == LocationStateStatus.error
-                  ? 'Estado del servidor inválido (last_sign): $serverSignType'
-                  : null,
-            ));
-          }
-        } else {
-          if (!emit.isDone) {
-            if (kDebugMode) {
-              print(
-                  "WARN: Field 'last_sign' missing or invalid in statusInfo response data: ${apiResponse.data}");
-            }
-          }
-        }
-      } else if (apiResponse.status == "error") {
-        if (!emit.isDone) {
-          _emitErrorState(
-              AppError('Error API statusInfo: ${apiResponse.msg}'), emit);
-        }
-      }
-    } catch (error) {
-      if (!emit.isDone) {
-        _emitErrorState(AppError('Error procesando statusInfo: $error'), emit);
-      }
-    }
-  }
-
   void _emitErrorState(dynamic error, Emitter<LocationState> emit) {
     final errorMessage =
         error is AppError ? error.message : 'Error desconocido $error';
 
-    if (!emit.isDone) {
-      emit(state.copyWith(
-          status: LocationStateStatus.error, errorMessage: errorMessage));
-    }
+    emit(state.copyWith(
+        status: LocationStateStatus.error, errorMessage: errorMessage));
   }
 
   void _emitLoadingState(Emitter<LocationState> emit) {
-    if (!emit.isDone) {
-      emit(state.copyWith(status: LocationStateStatus.loading));
-    }
+    emit(state.copyWith(status: LocationStateStatus.loading));
   }
 
   String _getSignTypeFromEvent(LocationEvent event) {
-    return switch (event) {
+    final signType = switch (event) {
       InitWorkingEvent _ => 'E',
       InitRestingEvent _ => 'DS',
       ReturnWorkingEvent _ => 'DE',
+      GoOutEvent _ => 'S',
       _ => 'S',
     };
+
+    if (kDebugMode) {
+      print(
+          "LocationBloc: Evento ${event.runtimeType} mapeado a tipo de fichaje: $signType");
+    }
+
+    return signType;
   }
 
   String _getFormattedTime() => DateFormat('HH:mm:ss').format(DateTime.now());
